@@ -1,10 +1,6 @@
 # unist-util-visit-parents [![Build Status][build-badge]][build-page] [![Coverage Status][coverage-badge]][coverage-page]
 
-[Unist][] node visitor, with ancestral information.  Useful when
-working with [**remark**][remark] or [**retext**][retext].
-
-Similar to [`unist-util-visit`][visit], which you should probably be
-using.
+[Unist][] node visitor, with ancestral information.
 
 ## Installation
 
@@ -14,24 +10,23 @@ using.
 npm install unist-util-visit-parents
 ```
 
-**unist-util-visit-parents** is also available as an AMD, CommonJS, and
-globals module, [uncompressed and compressed][releases].
-
 ## Usage
-
-Dependencies:
 
 ```javascript
 var remark = require('remark');
-var visitParents = require('unist-util-visit-parents');
+var visit = require('unist-util-visit-parents');
 
-remark().use(function () {
-    return function (ast) {
-        visitParents(ast, 'strong', function (node, parents) {
-          console.log(parents);
-        });
-    };
-}).process('# Some **strongness** in a heading');
+remark().use(plugin).process('Some _emphasis_, **importance**, and `code`.');
+
+function plugin() {
+  return transformer;
+  function transformer(tree) {
+    visit(tree, 'strong', visitor);
+  }
+  function visitor(node, parents) {
+    console.log(parents);
+  }
+}
 ```
 
 Yields:
@@ -39,31 +34,41 @@ Yields:
 ```js
 [ { type: 'root',
     children: [ [Object] ] },
-  { type: 'heading',
-    depth: 1,
-    children: [ [Object], [Object], [Object] ] } } ]
+  { type: 'paragraph',
+    children:
+     [ [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object] ] } ]
 ```
 
 ## API
 
-### `visitParents(node[, type], visitor)`
+### `visit(node[, type], visitor)`
 
 Visit nodes, with ancestral information.  Optionally by node type.
 
+###### Parameters
+
 *   `node` ([`Node`][node]) — Node to search;
 *   `type` (`string`, optional) — Node type;
-*   `visitor` (`Function`) — See [`visitor`][visitor].
+*   `visitor` ([Function][visitor]) — Visitor invoked when a node is found.
 
 #### `stop? = visitor(node, parents)`
 
 Invoked when a node (when `type` is given, matching `type`) is found.
 
-**Parameters**:
+###### Parameters
 
 *   `node` ([`Node`][node]) — Found node;
 *   `parents` (`Array.<Node>`) — List of parents.
 
-**Returns**: `boolean?` - When `false`, visiting is immediately stopped.
+###### Returns
+
+`boolean?` - When `false`, visiting is immediately stopped.
 
 ## License
 
@@ -81,20 +86,12 @@ Invoked when a node (when `type` is given, matching `type`) is found.
 
 [npm]: https://docs.npmjs.com/cli/install
 
-[releases]: https://github.com/wooorm/unist-util-visit-parents/releases
-
 [license]: LICENSE
 
 [author]: http://wooorm.com
 
 [unist]: https://github.com/wooorm/unist
 
-[retext]: https://github.com/wooorm/retext
-
-[remark]: https://github.com/wooorm/remark
-
 [node]: https://github.com/wooorm/unist#node
 
 [visitor]: #stop--visitornode-parents
-
-[visit]: https://github.com/wooorm/unist-util-visit
