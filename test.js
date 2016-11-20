@@ -4,7 +4,7 @@ var test = require('tape');
 var remark = require('remark');
 var visitParents = require('./index.js');
 
-var tree = remark.parse('Some _emphasis_, **strongness**, and `code`.');
+var tree = remark().parse('Some _emphasis_, **strongness**, and `code`.');
 
 var paragraph = tree.children[0];
 
