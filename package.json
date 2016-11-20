@@ -5,23 +5,11 @@
   "license": "MIT",
   "keywords": [
     "unist",
-    "remark",
-    "markdown",
-    "retext",
-    "natural",
-    "language",
-    "node",
-    "visit",
-    "parent",
-    "ancestor",
     "walk",
     "util",
     "utility"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wooorm/unist-util-visit-parents.git"
-  },
+  "repository": "https://github.com/wooorm/unist-util-visit-parents",
   "bugs": "https://github.com/wooorm/unist-util-visit-parents/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "contributors": [
