@@ -76,13 +76,13 @@ Invoked when a node (when `type` is given, matching `type`) is found.
 
 <!-- Definition -->
 
-[build-badge]: https://img.shields.io/travis/wooorm/unist-util-visit-parents.svg
+[build-badge]: https://img.shields.io/travis/syntax-tree/unist-util-visit-parents.svg
 
-[build-page]: https://travis-ci.org/wooorm/unist-util-visit-parents
+[build-page]: https://travis-ci.org/syntax-tree/unist-util-visit-parents
 
-[coverage-badge]: https://img.shields.io/codecov/c/github/wooorm/unist-util-visit-parents.svg
+[coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/unist-util-visit-parents.svg
 
-[coverage-page]: https://codecov.io/github/wooorm/unist-util-visit-parents?branch=master
+[coverage-page]: https://codecov.io/github/syntax-tree/unist-util-visit-parents?branch=master
 
 [npm]: https://docs.npmjs.com/cli/install
 
@@ -90,8 +90,8 @@ Invoked when a node (when `type` is given, matching `type`) is found.
 
 [author]: http://wooorm.com
 
-[unist]: https://github.com/wooorm/unist
+[unist]: https://github.com/syntax-tree/unist
 
-[node]: https://github.com/wooorm/unist#node
+[node]: https://github.com/syntax-tree/unist#node
 
 [visitor]: #stop--visitornode-parents
