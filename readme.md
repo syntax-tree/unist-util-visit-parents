@@ -16,7 +16,7 @@ npm install unist-util-visit-parents
 var remark = require('remark');
 var visit = require('unist-util-visit-parents');
 
-remark().use(plugin).process('Some _emphasis_, **importance**, and `code`.');
+remark().use(plugin).processSync('Some _emphasis_, **importance**, and `code`.');
 
 function plugin() {
   return transformer;
