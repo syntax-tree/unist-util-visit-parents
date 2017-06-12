@@ -70,6 +70,19 @@ Invoked when a node (when `type` is given, matching `type`) is found.
 
 `boolean?` - When `false`, visiting is immediately stopped.
 
+## Related
+
+*   [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
+    — Like `visit-parents`, but with one parent
+*   [`unist-util-filter`](https://github.com/eush77/unist-util-filter)
+    — Create a new tree with all nodes that pass a test
+*   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
+    — Create a new tree with all nodes mapped by a given function
+*   [`unist-util-remove`](https://github.com/eush77/unist-util-remove)
+    — Remove nodes from a tree that pass a test
+*   [`unist-util-select`](https://github.com/eush77/unist-util-select)
+    — Select nodes with CSS-like selectors
+
 ## License
 
 [MIT][license] © [Titus Wormer][author]
