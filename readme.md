@@ -53,9 +53,9 @@ Visit nodes, with ancestral information.  Optionally by node type.
 
 ###### Parameters
 
-*   `node` ([`Node`][node]) — Node to search;
-*   `type` (`string`, optional) — Node type;
-*   `visitor` ([Function][visitor]) — Visitor invoked when a node is found.
+*   `node` ([`Node`][node]) — Node to search
+*   `type` (`string`, optional) — Node type
+*   `visitor` ([Function][visitor]) — Visitor invoked when a node is found
 
 #### `stop? = visitor(node, parents)`
 
@@ -63,8 +63,8 @@ Invoked when a node (when `type` is given, matching `type`) is found.
 
 ###### Parameters
 
-*   `node` ([`Node`][node]) — Found node;
-*   `parents` (`Array.<Node>`) — List of parents.
+*   `node` ([`Node`][node]) — Found node
+*   `parents` (`Array.<Node>`) — List of parents
 
 ###### Returns
 
