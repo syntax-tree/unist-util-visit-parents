@@ -14,8 +14,6 @@ function visitParents(tree, type, visitor) {
 
   one(tree);
 
-  return;
-
   /* Visit a single node. */
   function one(node) {
     var result;
