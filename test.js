@@ -2,7 +2,7 @@
 
 var test = require('tape');
 var remark = require('remark');
-var visitParents = require('./index.js');
+var visitParents = require('.');
 
 var tree = remark().parse('Some _emphasis_, **importance**, and `code`.');
 
