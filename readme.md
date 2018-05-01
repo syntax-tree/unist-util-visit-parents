@@ -80,7 +80,7 @@ Invoked when a node (when `type` is given, matching `type`) is found.
 
 ## Contribute
 
-See [`contribute.md` in `syntax-tree/unist`][contribute] for ways to get
+See [`contributing.md` in `syntax-tree/unist`][contributing] for ways to get
 started.
 
 This organisation has a [Code of Conduct][coc].  By interacting with this
@@ -112,6 +112,6 @@ repository, organisation, or community you agree to abide by its terms.
 
 [visitor]: #stop--visitornode-parents
 
-[contribute]: https://github.com/syntax-tree/unist/blob/master/contributing.md
+[contributing]: https://github.com/syntax-tree/unist/blob/master/contributing.md
 
 [coc]: https://github.com/syntax-tree/unist/blob/master/code-of-conduct.md
