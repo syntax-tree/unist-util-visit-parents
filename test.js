@@ -1,16 +1,16 @@
-'use strict';
+'use strict'
 
-var test = require('tape');
-var remark = require('remark');
-var visitParents = require('.');
+var test = require('tape')
+var remark = require('remark')
+var visitParents = require('.')
 
-var tree = remark().parse('Some _emphasis_, **importance**, and `code`.');
+var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
 
-var paragraph = tree.children[0];
+var paragraph = tree.children[0]
 
-var textNodes = 6;
+var textNodes = 6
 
-var STOP = 5;
+var STOP = 5
 
 var types = [
   'root', // []
@@ -23,8 +23,8 @@ var types = [
   'text', // [tree, paragraph, paragraph.children[3]]
   'text', // [tree, paragraph]
   'inlineCode', // [tree, paragraph]
-  'text'// [tree, paragraph]
-];
+  'text' // [tree, paragraph]
+]
 
 var ancestors = [
   [],
@@ -38,7 +38,7 @@ var ancestors = [
   [tree, paragraph],
   [tree, paragraph],
   [tree, paragraph]
-];
+]
 
 var textAncestors = [
   [tree, paragraph],
@@ -47,66 +47,60 @@ var textAncestors = [
   [tree, paragraph, paragraph.children[3]],
   [tree, paragraph],
   [tree, paragraph]
-];
+]
 
 /* Tests. */
-test('unist-util-visit-parents', function (t) {
-  t.throws(
-    function () {
-      visitParents();
-    },
-    'should fail without tree'
-  );
+test('unist-util-visit-parents', function(t) {
+  t.throws(function() {
+    visitParents()
+  }, 'should fail without tree')
 
-  t.throws(
-    function () {
-      visitParents(tree);
-    },
-    'should fail without visitor'
-  );
+  t.throws(function() {
+    visitParents(tree)
+  }, 'should fail without visitor')
 
-  t.test('should iterate over all nodes', function (st) {
-    var n = -1;
+  t.test('should iterate over all nodes', function(st) {
+    var n = -1
 
-    visitParents(tree, function (node, parents) {
-      st.equal(node.type, types[++n]);
-      st.deepEqual(parents, ancestors[n]);
-    });
+    visitParents(tree, function(node, parents) {
+      st.equal(node.type, types[++n])
+      st.deepEqual(parents, ancestors[n])
+    })
 
-    st.equal(n, types.length - 1, 'should visit all nodes');
+    st.equal(n, types.length - 1, 'should visit all nodes')
 
-    st.end();
-  });
+    st.end()
+  })
 
-  t.test('should only visit given `types`', function (st) {
-    var n = 0;
+  t.test('should only visit given `types`', function(st) {
+    var n = 0
 
-    visitParents(tree, 'text', function (node, parents) {
-      st.equal(node.type, 'text');
-      st.deepEqual(parents, textAncestors[n]);
-      n++;
-    });
+    visitParents(tree, 'text', function(node, parents) {
+      st.equal(node.type, 'text')
+      st.deepEqual(parents, textAncestors[n])
+      n++
+    })
 
-    st.equal(n, textNodes, 'should visit all nodes');
+    st.equal(n, textNodes, 'should visit all nodes')
 
-    st.end();
-  });
+    st.end()
+  })
 
-  t.test('should stop if `visitor` stops', function (st) {
-    var n = -1;
+  t.test('should stop if `visitor` stops', function(st) {
+    var n = -1
 
-    visitParents(tree, function (node) {
-      st.equal(node.type, types[++n]);
+    visitParents(tree, function(node) {
+      st.equal(node.type, types[++n])
 
       if (n === STOP) {
-        return false;
+        return false
       }
-    });
+    })
 
-    st.equal(n, STOP, 'should visit all nodes');
+    st.equal(n, STOP, 'should visit all nodes')
 
-    st.end();
-  });
+    st.end()
+  })
 
-  t.end();
-});
+  t.end()
+})

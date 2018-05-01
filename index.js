@@ -1,52 +1,52 @@
-'use strict';
+'use strict'
 
 /* Expose. */
-module.exports = visitParents;
+module.exports = visitParents
 
 /* Visit. */
 function visitParents(tree, type, visitor) {
-  var stack = [];
+  var stack = []
 
   if (typeof type === 'function') {
-    visitor = type;
-    type = null;
+    visitor = type
+    type = null
   }
 
-  one(tree);
+  one(tree)
 
   /* Visit a single node. */
   function one(node) {
-    var result;
+    var result
 
     if (!type || node.type === type) {
-      result = visitor(node, stack.concat());
+      result = visitor(node, stack.concat())
     }
 
     if (node.children && result !== false) {
-      return all(node.children, node);
+      return all(node.children, node)
     }
 
-    return result;
+    return result
   }
 
   /* Visit children in `parent`. */
   function all(children, parent) {
-    var length = children.length;
-    var index = -1;
-    var child;
+    var length = children.length
+    var index = -1
+    var child
 
-    stack.push(parent);
+    stack.push(parent)
 
     while (++index < length) {
-      child = children[index];
+      child = children[index]
 
       if (child && one(child) === false) {
-        return false;
+        return false
       }
     }
 
-    stack.pop();
+    stack.pop()
 
-    return true;
+    return true
   }
 }

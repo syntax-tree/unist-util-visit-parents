@@ -13,15 +13,15 @@ npm install unist-util-visit-parents
 ## Usage
 
 ```javascript
-var remark = require('remark');
-var visit = require('unist-util-visit-parents');
+var remark = require('remark')
+var visit = require('unist-util-visit-parents')
 
-var tree = remark.parse('Some _emphasis_, **importance**, and `code`.');
+var tree = remark.parse('Some _emphasis_, **importance**, and `code`.')
 
-visit(tree, 'strong', visitor);
+visit(tree, 'strong', visitor)
 
 function visitor(node, parents) {
-  console.log(parents);
+  console.log(parents)
 }
 ```
 
