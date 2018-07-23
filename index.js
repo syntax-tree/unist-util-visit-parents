@@ -1,52 +1,63 @@
 'use strict'
 
-/* Expose. */
 module.exports = visitParents
 
-/* Visit. */
-function visitParents(tree, type, visitor) {
-  var stack = []
+var is = require('unist-util-is')
 
-  if (typeof type === 'function') {
-    visitor = type
-    type = null
+var CONTINUE = true
+var SKIP = 'skip'
+var EXIT = false
+
+visitParents.CONTINUE = CONTINUE
+visitParents.SKIP = SKIP
+visitParents.EXIT = EXIT
+
+function visitParents(tree, test, visitor, reverse) {
+  if (typeof test === 'function' && typeof visitor !== 'function') {
+    reverse = visitor
+    visitor = test
+    test = null
   }
 
-  one(tree)
+  one(tree, null, [])
 
-  /* Visit a single node. */
-  function one(node) {
+  // Visit a single node.
+  function one(node, index, parents) {
     var result
 
-    if (!type || node.type === type) {
-      result = visitor(node, stack.concat())
+    if (!test || is(test, node, index, parents[parents.length - 1] || null)) {
+      result = visitor(node, parents)
+
+      if (result === EXIT) {
+        return result
+      }
     }
 
-    if (node.children && result !== false) {
-      return all(node.children, node)
+    if (node.children && result !== SKIP) {
+      return all(node.children, parents.concat(node)) === EXIT ? EXIT : result
     }
 
     return result
   }
 
-  /* Visit children in `parent`. */
-  function all(children, parent) {
-    var length = children.length
-    var index = -1
+  // Visit children in `parent`.
+  function all(children, parents) {
+    var min = -1
+    var max = children.length
+    var step = reverse ? -1 : 1
+    var index = (reverse ? max : min) + step
     var child
+    var result
 
-    stack.push(parent)
-
-    while (++index < length) {
+    while (index > min && index < max) {
       child = children[index]
+      result = child && one(child, index, parents)
 
-      if (child && one(child) === false) {
-        return false
+      if (result === EXIT) {
+        return result
       }
+
+      index = typeof result === 'number' ? result : index + step
     }
-
-    stack.pop()
-
-    return true
   }
 }
