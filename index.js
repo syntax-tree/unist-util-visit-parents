@@ -43,13 +43,12 @@ function visitParents(tree, test, visitor, reverse) {
   // Visit children in `parent`.
   function all(children, parents) {
     var min = -1
-    var max = children.length
     var step = reverse ? -1 : 1
-    var index = (reverse ? max : min) + step
+    var index = (reverse ? children.length : min) + step
     var child
     var result
 
-    while (index > min && index < max) {
+    while (index > min && index < children.length) {
       child = children[index]
       result = child && one(child, index, parents)
 
