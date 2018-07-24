@@ -390,5 +390,26 @@ test('unist-util-visit-parents', function(t) {
     }
   )
 
+  t.test('should visit added nodes', function(st) {
+    var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
+    var other = remark().parse('Another ~~sentence~~.').children[0]
+    var l = types.length + 5 // (p, text, delete, text, text)
+    var n = 0
+
+    visitParents(tree, visitor)
+
+    st.equal(n, l, 'should walk over all nodes')
+
+    st.end()
+
+    function visitor(node, parents) {
+      n++
+
+      if (n === 2) {
+        parents[parents.length - 1].children.push(other)
+      }
+    }
+  })
+
   t.end()
 })
