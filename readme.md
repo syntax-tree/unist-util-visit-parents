@@ -100,7 +100,7 @@ An action can have the following values:
 *   `visit.CONTINUE` (`true`) — Continue traversing as normal (same behaviour
     as not returning anything)
 *   `visit.SKIP` (`'skip'`) — Do not traverse this node’s children; continue
-    with the next sibling
+    with the specified index
 
 ###### `index`
 
