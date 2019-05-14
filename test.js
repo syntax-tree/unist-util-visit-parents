@@ -210,6 +210,21 @@ test('unist-util-visit-parents', function(t) {
     }
   })
 
+  t.test('should stop if `visitor` stops (tuple)', function(st) {
+    var n = -1
+
+    visitParents(tree, visitor)
+
+    st.equal(n, STOP, 'should visit nodes until `visit.EXIT` is given')
+
+    st.end()
+
+    function visitor(node) {
+      assert.equal(node.type, types[++n])
+      return [n === STOP ? visitParents.EXIT : visitParents.CONTINUE]
+    }
+  })
+
   t.test('should stop if `visitor` stops, backwards', function(st) {
     var n = 0
 
@@ -246,6 +261,31 @@ test('unist-util-visit-parents', function(t) {
       if (n === SKIP) {
         n++ // The one node inside it.
         return visitParents.SKIP
+      }
+    }
+  })
+
+  t.test('should skip if `visitor` skips (tuple)', function(st) {
+    var n = 0
+    var count = 0
+
+    visitParents(tree, visitor)
+
+    st.equal(
+      count,
+      types.length - 1,
+      'should visit nodes except when `visit.SKIP` is given'
+    )
+
+    st.end()
+
+    function visitor(node) {
+      assert.equal(node.type, types[n++], 'should be the expected type')
+      count++
+
+      if (n === SKIP) {
+        n++ // The one node inside it.
+        return [visitParents.SKIP]
       }
     }
   })
@@ -385,6 +425,44 @@ test('unist-util-visit-parents', function(t) {
         if (again === false && node.type === 'strong') {
           again = true
           return index + 2 // Skip to `inlineCode`.
+        }
+      }
+    }
+  )
+
+  t.test(
+    'should support any other given `index` to iterate over next (tuple)',
+    function(st) {
+      var n = 0
+      var again = false
+      var expected = [
+        'root',
+        'paragraph',
+        'text',
+        'emphasis',
+        'text',
+        'text',
+        'strong',
+        'text',
+        'inlineCode', // Skip to here.
+        'text'
+      ]
+
+      visitParents(tree, visitor)
+
+      st.equal(n, expected.length, 'should skip nodes')
+
+      st.end()
+
+      function visitor(node, parents) {
+        var parent = parents[parents.length - 1]
+        var index = parent ? parent.children.indexOf(node) : null
+
+        assert.equal(node.type, expected[n++], 'should be the expected type')
+
+        if (again === false && node.type === 'strong') {
+          again = true
+          return [null, index + 2] // Skip to `inlineCode`.
         }
       }
     }

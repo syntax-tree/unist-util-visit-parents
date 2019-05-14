@@ -80,20 +80,36 @@ traversed.
 *   `node` ([`Node`][node]) — Found node
 *   `ancestors` (`Array.<Node>`) — [Ancestor][]s of `node`
 
-###### Returns
+##### Returns
+
+The return value can have the following forms:
+
+*   [`index`][index] (`number`) — Treated as a tuple of `[CONTINUE, index]`
+*   `action` (`*`) — Treated as a tuple of `[action]`
+*   `tuple` (`Array.<*>`) — List with one or two values, the first an `action`,
+    the second and `index`.
+    Note that passing a tuple only makes sense if the `action` is `SKIP`.
+    If the `action` is `EXIT`, that action can be returned.
+    If the `action` is `CONTINUE`, `index` can be returned.
+
+###### `action`
+
+An action can have the following values:
 
 *   `visit.EXIT` (`false`) — Stop traversing immediately
 *   `visit.CONTINUE` (`true`) — Continue traversing as normal (same behaviour
     as not returning anything)
 *   `visit.SKIP` (`'skip'`) — Do not traverse this node’s children; continue
-    with the next sibling
-*   [`index`][index] (`number`) — Move to the sibling at `index` next (after
-    `node` itself is completely traversed).
-    Useful if mutating the tree, such as removing the node the visitor is
-    currently on, or any of its previous siblings (or next siblings, in case of
-    `reverse`)
-    Results less than `0` or greater than or equal to `children.length` stop
-    traversing the parent
+    with the specified index
+
+###### `index`
+
+[`index`][index] (`number`) — Move to the sibling at `index` next (after `node`
+itself is completely traversed).
+Useful if mutating the tree, such as removing the node the visitor is currently
+on, or any of its previous siblings (or next siblings, in case of `reverse`)
+Results less than `0` or greater than or equal to `children.length` stop
+traversing the parent
 
 ## Related
 
