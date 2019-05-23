@@ -8,19 +8,19 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[Unist][] node visitor, with ancestral information.
+[**unist**][unist] utility to visit nodes, with ancestral information.
 
-## Installation
+## Install
 
 [npm][]:
 
-```bash
+```sh
 npm install unist-util-visit-parents
 ```
 
 ## Usage
 
-```javascript
+```js
 var remark = require('remark')
 var visit = require('unist-util-visit-parents')
 
@@ -57,9 +57,9 @@ ancestral information.  Optionally filtering nodes.  Optionally in reverse.
 
 ###### Parameters
 
-*   `tree` ([`Node`][node]) — Tree to traverse
+*   `tree` ([`Node`][node]) — [Tree][] to traverse
 *   `test` ([`Test`][is], optional) — [`is`][is]-compatible test (such as a
-    node type)
+    [type][])
 *   `visitor` ([Function][visitor]) — Function invoked when a node is found
     that passes `test`
 *   `reverse` (`boolean`, default: `false`) — The tree is walked in [preorder][]
@@ -137,11 +137,13 @@ traversing the parent
 
 ## Contribute
 
-See [`contributing.md` in `syntax-tree/unist`][contributing] for ways to get
+See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
 started.
+See [`support.md`][support] for ways to get help.
 
-This organisation has a [Code of Conduct][coc].  By interacting with this
-repository, organisation, or community you agree to abide by its terms.
+This project has a [Code of Conduct][coc].
+By interacting with this repository, organisation, or community you agree to
+abide by its terms.
 
 ## License
 
@@ -187,9 +189,11 @@ repository, organisation, or community you agree to abide by its terms.
 
 [visitor]: #next--visitornode-ancestors
 
-[contributing]: https://github.com/syntax-tree/unist/blob/master/contributing.md
+[contributing]: https://github.com/syntax-tree/.github/blob/master/contributing.md
 
-[coc]: https://github.com/syntax-tree/unist/blob/master/code-of-conduct.md
+[support]: https://github.com/syntax-tree/.github/blob/master/support.md
+
+[coc]: https://github.com/syntax-tree/.github/blob/master/code-of-conduct.md
 
 [is]: https://github.com/syntax-tree/unist-util-is
 
@@ -210,3 +214,5 @@ repository, organisation, or community you agree to abide by its terms.
 [ancestor]: https://github.com/syntax-tree/unist#ancestor
 
 [tree]: https://github.com/syntax-tree/unist#tree
+
+[type]: https://github.com/syntax-tree/unist#type
