@@ -1,4 +1,12 @@
-# unist-util-visit-parents [![Build Status][build-badge]][build-page] [![Coverage Status][coverage-badge]][coverage-page]
+# unist-util-visit-parents
+
+[![Build][build-badge]][build]
+[![Coverage][coverage-badge]][coverage]
+[![Downloads][downloads-badge]][downloads]
+[![Size][size-badge]][size]
+[![Sponsors][sponsors-badge]][collective]
+[![Backers][backers-badge]][collective]
+[![Chat][chat-badge]][chat]
 
 [Unist][] node visitor, with ancestral information.
 
@@ -143,11 +151,29 @@ repository, organisation, or community you agree to abide by its terms.
 
 [build-badge]: https://img.shields.io/travis/syntax-tree/unist-util-visit-parents.svg
 
-[build-page]: https://travis-ci.org/syntax-tree/unist-util-visit-parents
+[build]: https://travis-ci.org/syntax-tree/unist-util-visit-parents
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/unist-util-visit-parents.svg
 
-[coverage-page]: https://codecov.io/github/syntax-tree/unist-util-visit-parents?branch=master
+[coverage]: https://codecov.io/github/syntax-tree/unist-util-visit-parents
+
+[downloads-badge]: https://img.shields.io/npm/dm/unist-util-visit-parents.svg
+
+[downloads]: https://www.npmjs.com/package/unist-util-visit-parents
+
+[size-badge]: https://img.shields.io/bundlephobia/minzip/unist-util-visit-parents.svg
+
+[size]: https://bundlephobia.com/result?p=unist-util-visit-parents
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[collective]: https://opencollective.com/unified
+
+[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+
+[chat]: https://spectrum.chat/unified/syntax-tree
 
 [npm]: https://docs.npmjs.com/cli/install
 
