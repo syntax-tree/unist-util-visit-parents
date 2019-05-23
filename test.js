@@ -93,8 +93,12 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node, parents) {
-      assert.equal(node.type, types[n], 'should be the expected type')
-      assert.deepEqual(parents, ancestors[n], 'should have expected parents')
+      assert.strictEqual(node.type, types[n], 'should be the expected type')
+      assert.deepStrictEqual(
+        parents,
+        ancestors[n],
+        'should have expected parents'
+      )
       n++
     }
   })
@@ -109,7 +113,11 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node) {
-      assert.equal(node.type, reverseTypes[n], 'should be the expected type')
+      assert.strictEqual(
+        node.type,
+        reverseTypes[n],
+        'should be the expected type'
+      )
       n++
     }
   })
@@ -124,8 +132,8 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node, parents) {
-      assert.equal(node.type, 'text')
-      assert.deepEqual(parents, textAncestors[n])
+      assert.strictEqual(node.type, 'text')
+      assert.deepStrictEqual(parents, textAncestors[n])
       n++
     }
   })
@@ -141,7 +149,7 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node) {
-      assert.notEqual(types.indexOf(node.type), -1, 'should match')
+      assert.notStrictEqual(types.indexOf(node.type), -1, 'should match')
       n++
     }
   })
@@ -164,7 +172,7 @@ test('unist-util-visit-parents', function(t) {
       var parent = parents[parents.length - 1]
       var index = parent ? parent.children.indexOf(node) : null
       var info = '(' + (parent && parent.type) + ':' + index + ')'
-      assert.equal(node, nodes[n], 'should be a requested node ' + info)
+      assert.strictEqual(node, nodes[n], 'should be a requested node ' + info)
       n++
     }
 
@@ -205,7 +213,7 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node) {
-      assert.equal(node.type, types[++n])
+      assert.strictEqual(node.type, types[++n])
       return n === STOP ? visitParents.EXIT : visitParents.CONTINUE
     }
   })
@@ -220,7 +228,7 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node) {
-      assert.equal(node.type, types[++n])
+      assert.strictEqual(node.type, types[++n])
       return [n === STOP ? visitParents.EXIT : visitParents.CONTINUE]
     }
   })
@@ -235,7 +243,11 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node) {
-      assert.equal(node.type, reverseTypes[n++], 'should be the expected type')
+      assert.strictEqual(
+        node.type,
+        reverseTypes[n++],
+        'should be the expected type'
+      )
       return n === STOP ? visitParents.EXIT : visitParents.CONTINUE
     }
   })
@@ -255,7 +267,7 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node) {
-      assert.equal(node.type, types[n++], 'should be the expected type')
+      assert.strictEqual(node.type, types[n++], 'should be the expected type')
       count++
 
       if (n === SKIP) {
@@ -280,7 +292,7 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node) {
-      assert.equal(node.type, types[n++], 'should be the expected type')
+      assert.strictEqual(node.type, types[n++], 'should be the expected type')
       count++
 
       if (n === SKIP) {
@@ -305,7 +317,11 @@ test('unist-util-visit-parents', function(t) {
     st.end()
 
     function visitor(node) {
-      assert.equal(node.type, reverseTypes[n++], 'should be the expected type')
+      assert.strictEqual(
+        node.type,
+        reverseTypes[n++],
+        'should be the expected type'
+      )
       count++
 
       if (n === SKIP_REVERSE) {
@@ -347,7 +363,11 @@ test('unist-util-visit-parents', function(t) {
       st.end()
 
       function visitor(node) {
-        assert.equal(node.type, expected[n++], 'should be the expected type')
+        assert.strictEqual(
+          node.type,
+          expected[n++],
+          'should be the expected type'
+        )
 
         if (again === false && node.type === 'strong') {
           again = true
@@ -382,7 +402,11 @@ test('unist-util-visit-parents', function(t) {
       function visitor(node, parents) {
         var parent = parents[parents.length - 1]
 
-        assert.equal(node.type, expected[n++], 'should be the expected type')
+        assert.strictEqual(
+          node.type,
+          expected[n++],
+          'should be the expected type'
+        )
 
         if (again === false && node.type === 'strong') {
           again = true
@@ -420,7 +444,11 @@ test('unist-util-visit-parents', function(t) {
         var parent = parents[parents.length - 1]
         var index = parent ? parent.children.indexOf(node) : null
 
-        assert.equal(node.type, expected[n++], 'should be the expected type')
+        assert.strictEqual(
+          node.type,
+          expected[n++],
+          'should be the expected type'
+        )
 
         if (again === false && node.type === 'strong') {
           again = true
@@ -458,7 +486,11 @@ test('unist-util-visit-parents', function(t) {
         var parent = parents[parents.length - 1]
         var index = parent ? parent.children.indexOf(node) : null
 
-        assert.equal(node.type, expected[n++], 'should be the expected type')
+        assert.strictEqual(
+          node.type,
+          expected[n++],
+          'should be the expected type'
+        )
 
         if (again === false && node.type === 'strong') {
           again = true
