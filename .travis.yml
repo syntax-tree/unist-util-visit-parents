@@ -1,14 +1,14 @@
 language: node_js
 node_js:
-- lts/boron
-- node
+  - lts/dubnium
+  - node
 after_script: bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: releases
   api_key:
     secure: tv0mKJ0LBc/7YoY6yBPLNkegdlCNA6lEC5l00GQ8l+DwQ9lkWowvBYXirttKP5P/twZFeS+G1gO+EGUxY/PamiINV17a8yAiRMfMy8UYHFk42f/nw82t2iWT9WGzM/vP/ixVZ9voT5OrVUcXrRuAZjVCaRsyYuL1pwHG/XTYzS1o98NA7QkrChjzDesgm/fjWG5VR9mptQsVoxc3VIiWtx5vhlsXnyIwu3UAsCTIkqCLmm4IPLarVc7wsyR0NpM1wcNZ+PhHkSHhDJSOsEVqfyu0nofQQDwklMb9U6RRuqeZ2wepTY28MxEKYCZkGv8eAauypmBeOaPucT+CGgU0gg+MusLsDQwlLW7oDgyknmK+P1itClQVVcYndv4ml/kSXMfJKH69x35FqkSy12N8vQfBNWv0gLbTyVXtq74aJGQ2tKaW37Limo3IRqzHK2QIvHx016q+aIsfjBwa+ooXx/3k3rycTrrov0WsKEyvBYDY9Z/iQPWZCPGyb019nrhVOG2Bz0xCxDzJRAjvM1Ce9Wj3Id/n0NQINf45fsg2ULWRclC5dxVVKPD7mmAfBJNhXcV3MehyD2+2xHo5hZczylkMh98HLy7A604b55pAmj9azBdqUJH2c2gpmBMNWfbpWeyBk+8dKP9fN1jDZk25iyQribDlWQ6iVeCSGHaMCLQ=
   file:
-    - "unist-util-visit-parents.js"
-    - "unist-util-visit-parents.min.js"
+    - 'unist-util-visit-parents.js'
+    - 'unist-util-visit-parents.min.js'
   on:
     tags: true
