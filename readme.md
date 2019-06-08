@@ -52,8 +52,14 @@ Yields:
 
 ### `visit(tree[, test], visitor[, reverse])`
 
-Visit nodes ([**inclusive descendants**][descendant] of [`tree`][tree]), with
-ancestral information.  Optionally filtering nodes.  Optionally in reverse.
+Visit nodes ([*inclusive descendants*][descendant] of [`tree`][tree]), with
+ancestral information.
+Optionally filtering nodes.
+Optionally in reverse.
+
+This algorithm performs [*depth-first*][depth-first]
+[*tree traversal*][tree-traversal] in [*preorder*][preorder] (**NLR**), or
+if `reverse` is given, in *reverse preorder* (**NRL**).
 
 ###### Parameters
 
@@ -62,10 +68,10 @@ ancestral information.  Optionally filtering nodes.  Optionally in reverse.
     [type][])
 *   `visitor` ([Function][visitor]) — Function invoked when a node is found
     that passes `test`
-*   `reverse` (`boolean`, default: `false`) — The tree is walked in [preorder][]
-    (NLR), visiting the node itself, then its [head][], etc.
-    When `reverse` is passed, the tree is stilled walked in preorder, but now
-    in NRL (the node itself, then its [tail][], etc.)
+*   `reverse` (`boolean`, default: `false`) — The tree is traversed in
+    [preorder][] (NLR), visiting the node itself, then its [head][], etc.
+    When `reverse` is passed, the tree is traversed in reverse preorder (NRL):
+    the node itself is visited, then its [tail][], etc.
 
 #### `next? = visitor(node, ancestors)`
 
@@ -80,7 +86,7 @@ If adding or removing previous [sibling][]s (or next siblings, in case of
 to specify the sibling to traverse after `node` is traversed.
 Adding or removing next siblings of `node` (or previous siblings, in case of
 reverse) is handled as expected without needing to return a new `index`.
-Removing the `children` property of parent still results in them being
+Removing the `children` property of an ancestor still results in them being
 traversed.
 
 ###### Parameters
@@ -197,7 +203,11 @@ abide by its terms.
 
 [is]: https://github.com/syntax-tree/unist-util-is
 
-[preorder]: https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/
+[depth-first]: https://github.com/syntax-tree/unist#depth-first-traversal
+
+[tree-traversal]: https://github.com/syntax-tree/unist#tree-traversal
+
+[preorder]: https://github.com/syntax-tree/unist#preorder
 
 [descendant]: https://github.com/syntax-tree/unist#descendant
 
