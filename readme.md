@@ -61,6 +61,12 @@ This algorithm performs [*depth-first*][depth-first]
 [*tree traversal*][tree-traversal] in [*preorder*][preorder] (**NLR**), or
 if `reverse` is given, in *reverse preorder* (**NRL**).
 
+Walking the tree is an intensive task.
+Make use of the return values of the visitor when possible.
+Instead of walking a tree multiple times with different `test`s, walk it once
+without a test, and use [`unist-util-is`][is] to check if a node matches a test,
+and then perform different operations.
+
 ###### Parameters
 
 *   `tree` ([`Node`][node]) — [Tree][] to traverse
