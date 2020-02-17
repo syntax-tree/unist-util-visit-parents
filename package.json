@@ -1,13 +1,21 @@
 {
   "name": "unist-util-visit-parents",
   "version": "3.0.1",
-  "description": "Recursively walk over unist nodes, with ancestral information",
+  "description": "unist utility to recursively walk over nodes, with ancestral information",
   "license": "MIT",
   "keywords": [
     "unist",
-    "walk",
+    "unist-util",
     "util",
-    "utility"
+    "utility",
+    "tree",
+    "ast",
+    "visit",
+    "traverse",
+    "walk",
+    "check",
+    "parent",
+    "parents"
   ],
   "repository": "syntax-tree/unist-util-visit-parents",
   "bugs": "https://github.com/syntax-tree/unist-util-visit-parents/issues",
