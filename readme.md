@@ -135,16 +135,15 @@ traversing the parent
 
 *   [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
     — Like `visit-parents`, but with one parent
-*   [`unist-util-filter`](https://github.com/eush77/unist-util-filter)
+*   [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
     — Create a new tree with all nodes that pass a test
 *   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
     — Create a new tree with all nodes mapped by a given function
 *   [`unist-util-flatmap`](https://gitlab.com/staltz/unist-util-flatmap)
-    — Create a new tree by mapping (to an array) with the provided function and
-    then flattening
-*   [`unist-util-remove`](https://github.com/eush77/unist-util-remove)
+    — Create a new tree by mapping (to an array) with the given function
+*   [`unist-util-remove`](https://github.com/syntax-tree/unist-util-remove)
     — Remove nodes from a tree that pass a test
-*   [`unist-util-select`](https://github.com/eush77/unist-util-select)
+*   [`unist-util-select`](https://github.com/syntax-tree/unist-util-select)
     — Select nodes with CSS-like selectors
 
 ## Contribute
