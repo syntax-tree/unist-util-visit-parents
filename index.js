@@ -3,6 +3,7 @@
 module.exports = visitParents
 
 var convert = require('unist-util-is/convert')
+var color = require('./color')
 
 var CONTINUE = true
 var SKIP = 'skip'
@@ -15,7 +16,7 @@ visitParents.EXIT = EXIT
 function visitParents(tree, test, visitor, reverse) {
   var is
 
-  if (typeof test === 'function' && typeof visitor !== 'function') {
+  if (func(test) && !func(visitor)) {
     reverse = visitor
     visitor = test
     test = null
@@ -23,38 +24,57 @@ function visitParents(tree, test, visitor, reverse) {
 
   is = convert(test)
 
-  one(tree, null, [])
+  one(tree, null, [])()
 
-  // Visit a single node.
-  function one(node, index, parents) {
-    var result = []
-    var subresult
+  function one(child, index, parents) {
+    var value = object(child) ? child : {}
+    var name
 
-    if (!test || is(node, index, parents[parents.length - 1] || null)) {
-      result = toResult(visitor(node, parents))
+    if (string(value.type)) {
+      name = string(value.tagName)
+        ? value.tagName
+        : string(value.name)
+        ? value.name
+        : undefined
 
-      if (result[0] === EXIT) {
+      node.displayName =
+        'node (' + color(value.type + (name ? '<' + name + '>' : '')) + ')'
+    }
+
+    return node
+
+    function node() {
+      var result = []
+      var subresult
+
+      if (!test || is(child, index, parents[parents.length - 1] || null)) {
+        result = toResult(visitor(child, parents))
+
+        if (result[0] === EXIT) {
+          return result
+        }
+      }
+
+      if (!child.children || result[0] === SKIP) {
         return result
       }
-    }
 
-    if (node.children && result[0] !== SKIP) {
-      subresult = toResult(all(node.children, parents.concat(node)))
+      subresult = toResult(children(child.children, parents.concat(child)))
       return subresult[0] === EXIT ? subresult : result
     }
-
-    return result
   }
 
   // Visit children in `parent`.
-  function all(children, parents) {
+  function children(children, parents) {
     var min = -1
     var step = reverse ? -1 : 1
     var index = (reverse ? children.length : min) + step
+    var child
     var result
 
     while (index > min && index < children.length) {
-      result = one(children[index], index, parents)
+      child = children[index]
+      result = one(child, index, parents)()
 
       if (result[0] === EXIT) {
         return result
@@ -66,7 +86,7 @@ function visitParents(tree, test, visitor, reverse) {
 }
 
 function toResult(value) {
-  if (value !== null && typeof value === 'object' && 'length' in value) {
+  if (object(value) && 'length' in value) {
     return value
   }
 
@@ -75,4 +95,16 @@ function toResult(value) {
   }
 
   return [value]
+}
+
+function func(d) {
+  return typeof d === 'function'
+}
+
+function string(d) {
+  return typeof d === 'string'
+}
+
+function object(d) {
+  return typeof d === 'object' && d !== null
 }

@@ -27,8 +27,16 @@
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)"
   ],
+  "browser": {
+    "./color.js": "./color.browser.js"
+  },
+  "react-native": {
+    "./color.js": "./color.browser.js"
+  },
   "files": [
     "index.js",
+    "color.js",
+    "color.browser.js",
     "types/index.d.ts"
   ],
   "types": "types/index.d.ts",
@@ -44,6 +52,7 @@
     "remark": "^12.0.0",
     "remark-cli": "^8.0.0",
     "remark-preset-wooorm": "^7.0.0",
+    "strip-ansi": "^6.0.0",
     "tape": "^5.0.0",
     "tinyify": "^2.0.0",
     "typescript": "^3.0.0",
@@ -78,7 +87,8 @@
     "prettier": true,
     "esnext": false,
     "rules": {
-      "unicorn/prefer-set-has": "off"
+      "unicorn/prefer-set-has": "off",
+      "unicorn/prefer-reflect-apply": "off"
     },
     "ignores": [
       "types/",
