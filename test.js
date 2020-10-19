@@ -5,6 +5,7 @@ var assert = require('assert')
 var strip = require('strip-ansi')
 var test = require('tape')
 var remark = require('remark')
+var gfm = require('remark-gfm')
 var visitParents = require('.')
 
 var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
@@ -504,7 +505,7 @@ test('unist-util-visit-parents', function (t) {
 
   t.test('should visit added nodes', function (t) {
     var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
-    var other = remark().parse('Another ~~sentence~~.').children[0]
+    var other = remark().use(gfm).parse('Another ~~sentence~~.').children[0]
     var l = types.length + 5 // (p, text, delete, text, text)
     var n = 0
 
