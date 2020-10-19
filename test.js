@@ -524,6 +524,22 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
+  t.test('should recurse into a bazillion nodes', function (t) {
+    var expected = 6000
+    var tree = remark().parse(new Array(expected / 4).join('* 1. ') + 'asd')
+    var n = 1
+
+    visitParents(tree, visitor)
+
+    t.equal(n, expected, 'should walk over all nodes')
+
+    t.end()
+
+    function visitor() {
+      n++
+    }
+  })
+
   t.test('should add a pretty stack', function (t) {
     var source = new RegExp(
       '\\([^)]+\\' + path.sep + '(\\w+.js):\\d+:\\d+\\)',
@@ -559,17 +575,14 @@ test('unist-util-visit-parents', function (t) {
       strip(err.stack)
         .replace(source, '($1:1:1)')
         .split('\n')
-        .slice(0, 10)
+        .slice(0, 7)
         .join('\n'),
       [
         'Error: Oh no!',
         '    at fail (test.js:1:1)',
         '    at node (text) (index.js:1:1)',
-        '    at children (index.js:1:1)',
         '    at node (element<xml>) (index.js:1:1)',
-        '    at children (index.js:1:1)',
         '    at node (element<div>) (index.js:1:1)',
-        '    at children (index.js:1:1)',
         '    at node (root) (index.js:1:1)',
         '    at visitParents (index.js:1:1)'
       ].join('\n'),
