@@ -162,9 +162,9 @@ abide by its terms.
 
 <!-- Definition -->
 
-[build-badge]: https://img.shields.io/travis/syntax-tree/unist-util-visit-parents.svg
+[build-badge]: https://github.com/syntax-tree/unist-util-visit-parents/workflows/main/badge.svg
 
-[build]: https://travis-ci.org/syntax-tree/unist-util-visit-parents
+[build]: https://github.com/syntax-tree/unist-util-visit-parents/actions
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/unist-util-visit-parents.svg
 
