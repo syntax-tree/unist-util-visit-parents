@@ -58,12 +58,12 @@
     "tinyify": "^3.0.0",
     "typescript": "^4.0.0",
     "unified": "^9.0.0",
-    "xo": "^0.34.0"
+    "xo": "^0.35.0"
   },
   "scripts": {
-    "format": "remark . -qfo && prettier . --write && xo --fix",
-    "build-bundle": "browserify index.js -s unistUtilVisitParents > unist-util-visit-parents.js",
-    "build-mangle": "browserify index.js -s unistUtilVisitParents -p tinyify > unist-util-visit-parents.min.js",
+    "format": "remark . -qfo && prettier . --write --loglevel warn && xo --fix",
+    "build-bundle": "browserify index.js -s unistUtilVisitParents -o unist-util-visit-parents.js",
+    "build-mangle": "browserify index.js -s unistUtilVisitParents -o unist-util-visit-parents.min.js -p tinyify",
     "build": "npm run build-bundle && npm run build-mangle",
     "test-api": "node test",
     "test-coverage": "nyc --reporter lcov tape test.js",
