@@ -27,54 +27,46 @@
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)"
   ],
+  "sideEffects": false,
+  "type": "module",
+  "main": "index.js",
   "browser": {
     "./color.js": "./color.browser.js"
   },
   "react-native": {
     "./color.js": "./color.browser.js"
   },
+  "types": "types/index.d.ts",
   "files": [
-    "index.js",
     "color.js",
     "color.browser.js",
+    "index.js",
     "types/index.d.ts"
   ],
-  "types": "types/index.d.ts",
   "dependencies": {
     "@types/unist": "^2.0.0",
-    "unist-util-is": "^4.0.0"
+    "unist-util-is": "^5.0.0"
   },
   "devDependencies": {
-    "browserify": "^17.0.0",
+    "c8": "^7.7.1",
     "dtslint": "^4.0.0",
-    "nyc": "^15.0.0",
     "prettier": "^2.0.0",
     "remark": "^13.0.0",
     "remark-cli": "^9.0.0",
     "remark-gfm": "^1.0.0",
     "remark-preset-wooorm": "^8.0.0",
-    "strip-ansi": "^6.0.0",
+    "strip-ansi": "^7.0.0",
     "tape": "^5.0.0",
-    "tinyify": "^3.0.0",
     "typescript": "^4.0.0",
     "unified": "^9.0.0",
     "xo": "^0.38.0"
   },
   "scripts": {
     "format": "remark . -qfo && prettier . --write --loglevel warn && xo --fix",
-    "build-bundle": "browserify index.js -s unistUtilVisitParents -o unist-util-visit-parents.js",
-    "build-mangle": "browserify index.js -s unistUtilVisitParents -o unist-util-visit-parents.min.js -p tinyify",
-    "build": "npm run build-bundle && npm run build-mangle",
-    "test-api": "node test",
-    "test-coverage": "nyc --reporter lcov tape test.js",
-    "test-types": "dtslint types",
-    "test": "npm run format && npm run build && npm run test-coverage && npm run test-types"
-  },
-  "nyc": {
-    "check-coverage": true,
-    "lines": 100,
-    "functions": 100,
-    "branches": 100
+    "test-api": "node test.js",
+    "test-coverage": "c8 --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 --reporter lcov node test.js",
+    "test-types": "# dtslint types",
+    "test": "npm run format && npm run test-coverage && npm run test-types"
   },
   "prettier": {
     "tabWidth": 2,
@@ -86,14 +78,12 @@
   },
   "xo": {
     "prettier": true,
-    "esnext": false,
     "rules": {
-      "unicorn/prefer-set-has": "off",
-      "unicorn/prefer-reflect-apply": "off"
+      "no-var": "off",
+      "prefer-arrow-callback": "off"
     },
-    "ignores": [
-      "types/",
-      "unist-util-visit-parents.js"
+    "ignore": [
+      "types/"
     ]
   },
   "remarkConfig": {

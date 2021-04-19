@@ -1,19 +1,11 @@
-'use strict'
+import {convert} from 'unist-util-is'
+import {color} from './color.js'
 
-module.exports = visitParents
+export const CONTINUE = true
+export const SKIP = 'skip'
+export const EXIT = false
 
-var convert = require('unist-util-is/convert')
-var color = require('./color')
-
-var CONTINUE = true
-var SKIP = 'skip'
-var EXIT = false
-
-visitParents.CONTINUE = CONTINUE
-visitParents.SKIP = SKIP
-visitParents.EXIT = EXIT
-
-function visitParents(tree, test, visitor, reverse) {
+export function visitParents(tree, test, visitor, reverse) {
   var step
   var is
 

@@ -1,4 +1,3 @@
-module.exports = identity
-function identity(d) {
+export function color(d) {
   return d
 }

@@ -1,12 +1,10 @@
-'use strict'
-
-var path = require('path')
-var assert = require('assert')
-var strip = require('strip-ansi')
-var test = require('tape')
-var remark = require('remark')
-var gfm = require('remark-gfm')
-var visitParents = require('.')
+import path from 'path'
+import assert from 'assert'
+import strip from 'strip-ansi'
+import test from 'tape'
+import remark from 'remark'
+import gfm from 'remark-gfm'
+import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
 
 var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
 
@@ -14,9 +12,9 @@ var paragraph = tree.children[0]
 
 var textNodes = 6
 
-var STOP = 5
-var SKIP = 7
-var SKIP_REVERSE = 6
+var stopIndex = 5
+var skipIndex = 7
+var skipReverseIndex = 6
 
 var types = [
   'root', // []
@@ -185,7 +183,7 @@ test('unist-util-visit-parents', function (t) {
   })
 
   t.test('should accept an array of `is`-compatible tests', function (t) {
-    var expected = ['root', 'paragraph', 'emphasis', 'strong']
+    var expected = new Set(['root', 'paragraph', 'emphasis', 'strong'])
     var tests = [test, 'paragraph', {value: '.'}, ['emphasis', 'strong']]
     var n = 0
 
@@ -196,7 +194,7 @@ test('unist-util-visit-parents', function (t) {
     t.end()
 
     function visitor(node) {
-      var ok = expected.includes(node.type) || node.value === '.'
+      var ok = expected.has(node.type) || node.value === '.'
       assert.ok(ok, 'should be a requested type: ' + node.type)
       n++
     }
@@ -211,13 +209,13 @@ test('unist-util-visit-parents', function (t) {
 
     visitParents(tree, visitor)
 
-    t.equal(n, STOP, 'should visit nodes until `visit.EXIT` is given')
+    t.equal(n, stopIndex, 'should visit nodes until `visit.EXIT` is given')
 
     t.end()
 
     function visitor(node) {
       assert.strictEqual(node.type, types[++n])
-      return n === STOP ? visitParents.EXIT : visitParents.CONTINUE
+      return n === stopIndex ? EXIT : CONTINUE
     }
   })
 
@@ -226,13 +224,13 @@ test('unist-util-visit-parents', function (t) {
 
     visitParents(tree, visitor)
 
-    t.equal(n, STOP, 'should visit nodes until `visit.EXIT` is given')
+    t.equal(n, stopIndex, 'should visit nodes until `visit.EXIT` is given')
 
     t.end()
 
     function visitor(node) {
       assert.strictEqual(node.type, types[++n])
-      return [n === STOP ? visitParents.EXIT : visitParents.CONTINUE]
+      return [n === stopIndex ? EXIT : CONTINUE]
     }
   })
 
@@ -241,7 +239,7 @@ test('unist-util-visit-parents', function (t) {
 
     visitParents(tree, visitor, true)
 
-    t.equal(n, STOP, 'should visit nodes until `visit.EXIT` is given')
+    t.equal(n, stopIndex, 'should visit nodes until `visit.EXIT` is given')
 
     t.end()
 
@@ -251,7 +249,7 @@ test('unist-util-visit-parents', function (t) {
         reverseTypes[n++],
         'should be the expected type'
       )
-      return n === STOP ? visitParents.EXIT : visitParents.CONTINUE
+      return n === stopIndex ? EXIT : CONTINUE
     }
   })
 
@@ -264,7 +262,7 @@ test('unist-util-visit-parents', function (t) {
     t.equal(
       count,
       types.length - 1,
-      'should visit nodes except when `visit.SKIP` is given'
+      'should visit nodes except when `SKIP` is given'
     )
 
     t.end()
@@ -273,9 +271,9 @@ test('unist-util-visit-parents', function (t) {
       assert.strictEqual(node.type, types[n++], 'should be the expected type')
       count++
 
-      if (n === SKIP) {
+      if (n === skipIndex) {
         n++ // The one node inside it.
-        return visitParents.SKIP
+        return SKIP
       }
     }
   })
@@ -298,9 +296,9 @@ test('unist-util-visit-parents', function (t) {
       assert.strictEqual(node.type, types[n++], 'should be the expected type')
       count++
 
-      if (n === SKIP) {
+      if (n === skipIndex) {
         n++ // The one node inside it.
-        return [visitParents.SKIP]
+        return [SKIP]
       }
     }
   })
@@ -327,9 +325,9 @@ test('unist-util-visit-parents', function (t) {
       )
       count++
 
-      if (n === SKIP_REVERSE) {
+      if (n === skipReverseIndex) {
         n++ // The one node inside it.
-        return visitParents.SKIP
+        return SKIP
       }
     }
   })
