@@ -53,7 +53,8 @@ Yields:
 
 ## API
 
-This package exports the following identifiers: `visitParents`.
+This package exports the following identifiers: `visitParents`, `SKIP`,
+`CONTINUE`, and `EXIT`.
 There is no default export.
 
 ### `visitParents(tree[, test], visitor[, reverse])`
@@ -91,7 +92,7 @@ Invoked when a node (matching `test`, if given) is found.
 
 Visitors are free to transform `node`.
 They can also transform the [parent][] of node (the last of `ancestors`).
-Replacing `node` itself, if `visit.SKIP` is not returned, still causes its
+Replacing `node` itself, if `SKIP` is not returned, still causes its
 [descendant][]s to be visited.
 If adding or removing previous [sibling][]s (or next siblings, in case of
 `reverse`) of `node`, `visitor` should return a new [`index`][index] (`number`)
@@ -122,10 +123,10 @@ The return value can have the following forms:
 
 An action can have the following values:
 
-*   `visit.EXIT` (`false`) — Stop traversing immediately
-*   `visit.CONTINUE` (`true`) — Continue traversing as normal (same behaviour
+*   `EXIT` (`false`) — Stop traversing immediately
+*   `CONTINUE` (`true`) — Continue traversing as normal (same behaviour
     as not returning anything)
-*   `visit.SKIP` (`'skip'`) — Do not traverse this node’s children; continue
+*   `SKIP` (`'skip'`) — Do not traverse this node’s children; continue
     with the specified index
 
 ###### `index`

@@ -1,3 +1,10 @@
+/**
+ * @typedef {import('unist').Node} Node
+ * @typedef {import('unist').Parent} Parent
+ *
+ * @typedef {import('mdast').Text} Text
+ */
+
 import path from 'path'
 import assert from 'assert'
 import strip from 'strip-ansi'
@@ -44,6 +51,7 @@ var reverseTypes = [
   'text'
 ]
 
+/** @type {Array.<Array.<Parent>>} */
 var ancestors = [
   [],
   [tree],
@@ -58,6 +66,7 @@ var ancestors = [
   [tree, paragraph]
 ]
 
+/** @type {Array.<Array.<Parent>>} */
 var textAncestors = [
   [tree, paragraph],
   [tree, paragraph, paragraph.children[1]],
@@ -70,6 +79,7 @@ var textAncestors = [
 test('unist-util-visit-parents', function (t) {
   t.throws(
     function () {
+      // @ts-ignore runtime
       visitParents()
     },
     /TypeError: visitor is not a function/,
@@ -78,6 +88,7 @@ test('unist-util-visit-parents', function (t) {
 
   t.throws(
     function () {
+      // @ts-ignore runtime
       visitParents(tree)
     },
     /TypeError: visitor is not a function/,
@@ -93,6 +104,10 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
+    /**
+     * @param {Node} node
+     * @param {Array.<Parent>} parents
+     */
     function visitor(node, parents) {
       assert.strictEqual(node.type, types[n], 'should be the expected type')
       assert.deepStrictEqual(
@@ -113,6 +128,9 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
+    /**
+     * @param {Node} node
+     */
     function visitor(node) {
       assert.strictEqual(
         node.type,
@@ -132,6 +150,10 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
+    /**
+     * @param {Node} node
+     * @param {Array.<Parent>} parents
+     */
     function visitor(node, parents) {
       assert.strictEqual(node.type, 'text')
       assert.deepStrictEqual(parents, textAncestors[n])
@@ -149,6 +171,9 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
+    /**
+     * @param {Node} node
+     */
     function visitor(node) {
       assert.notStrictEqual(types.indexOf(node.type), -1, 'should match')
       n++
@@ -157,6 +182,7 @@ test('unist-util-visit-parents', function (t) {
 
   t.test('should accept any `is`-compatible test function', function (t) {
     var n = 0
+    /** @type {Array.<Node>} */
     var nodes = [
       paragraph.children[4],
       paragraph.children[5],
@@ -169,6 +195,10 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
+    /**
+     * @param {Node} node
+     * @param {Array.<Parent>} parents
+     */
     function visitor(node, parents) {
       var parent = parents[parents.length - 1]
       var index = parent ? parent.children.indexOf(node) : null
@@ -177,14 +207,18 @@ test('unist-util-visit-parents', function (t) {
       n++
     }
 
-    function test(node, index) {
+    /**
+     * @param {Node} _
+     * @param {number} index
+     */
+    function test(_, index) {
       return index > 3
     }
   })
 
   t.test('should accept an array of `is`-compatible tests', function (t) {
     var expected = new Set(['root', 'paragraph', 'emphasis', 'strong'])
-    var tests = [test, 'paragraph', {value: '.'}, ['emphasis', 'strong']]
+    var tests = [test, 'paragraph', {value: '.'}, 'emphasis', 'strong']
     var n = 0
 
     visitParents(tree, tests, visitor)
@@ -193,12 +227,18 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
+    /**
+     * @param {Node} node
+     */
     function visitor(node) {
       var ok = expected.has(node.type) || node.value === '.'
       assert.ok(ok, 'should be a requested type: ' + node.type)
       n++
     }
 
+    /**
+     * @param {Node} node
+     */
     function test(node) {
       return node.type === 'root'
     }
@@ -209,10 +249,13 @@ test('unist-util-visit-parents', function (t) {
 
     visitParents(tree, visitor)
 
-    t.equal(n, stopIndex, 'should visit nodes until `visit.EXIT` is given')
+    t.equal(n, stopIndex, 'should visit nodes until `EXIT` is given')
 
     t.end()
 
+    /**
+     * @param {Node} node
+     */
     function visitor(node) {
       assert.strictEqual(node.type, types[++n])
       return n === stopIndex ? EXIT : CONTINUE
@@ -224,10 +267,14 @@ test('unist-util-visit-parents', function (t) {
 
     visitParents(tree, visitor)
 
-    t.equal(n, stopIndex, 'should visit nodes until `visit.EXIT` is given')
+    t.equal(n, stopIndex, 'should visit nodes until `EXIT` is given')
 
     t.end()
 
+    /**
+     * @param {Node} node
+     * @returns {[boolean]}
+     */
     function visitor(node) {
       assert.strictEqual(node.type, types[++n])
       return [n === stopIndex ? EXIT : CONTINUE]
@@ -239,10 +286,13 @@ test('unist-util-visit-parents', function (t) {
 
     visitParents(tree, visitor, true)
 
-    t.equal(n, stopIndex, 'should visit nodes until `visit.EXIT` is given')
+    t.equal(n, stopIndex, 'should visit nodes until `EXIT` is given')
 
     t.end()
 
+    /**
+     * @param {Node} node
+     */
     function visitor(node) {
       assert.strictEqual(
         node.type,
@@ -267,6 +317,10 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
+    /**
+     * @param {Node} node
+     * @returns {'skip'?}
+     */
     function visitor(node) {
       assert.strictEqual(node.type, types[n++], 'should be the expected type')
       count++
@@ -287,11 +341,15 @@ test('unist-util-visit-parents', function (t) {
     t.equal(
       count,
       types.length - 1,
-      'should visit nodes except when `visit.SKIP` is given'
+      'should visit nodes except when `SKIP` is given'
     )
 
     t.end()
 
+    /**
+     * @param {Node} node
+     * @returns {['skip']}
+     */
     function visitor(node) {
       assert.strictEqual(node.type, types[n++], 'should be the expected type')
       count++
@@ -312,11 +370,15 @@ test('unist-util-visit-parents', function (t) {
     t.equal(
       count,
       reverseTypes.length - 1,
-      'should visit nodes except when `visit.SKIP` is given'
+      'should visit nodes except when `SKIP` is given'
     )
 
     t.end()
 
+    /**
+     * @param {Node} node
+     * @returns {'skip'|void}
+     */
     function visitor(node) {
       assert.strictEqual(
         node.type,
@@ -363,6 +425,9 @@ test('unist-util-visit-parents', function (t) {
 
       t.end()
 
+      /**
+       * @param {Node} node
+       */
       function visitor(node) {
         assert.strictEqual(
           node.type,
@@ -400,6 +465,10 @@ test('unist-util-visit-parents', function (t) {
 
       t.end()
 
+      /**
+       * @param {Node} node
+       * @param {Array.<Parent>} parents
+       */
       function visitor(node, parents) {
         var parent = parents[parents.length - 1]
 
@@ -441,6 +510,10 @@ test('unist-util-visit-parents', function (t) {
 
       t.end()
 
+      /**
+       * @param {Node} node
+       * @param {Array.<Parent>} parents
+       */
       function visitor(node, parents) {
         var parent = parents[parents.length - 1]
         var index = parent ? parent.children.indexOf(node) : null
@@ -483,6 +556,11 @@ test('unist-util-visit-parents', function (t) {
 
       t.end()
 
+      /**
+       * @param {Node} node
+       * @param {Array.<Parent>} parents
+       * @returns {[null, number]}
+       */
       function visitor(node, parents) {
         var parent = parents[parents.length - 1]
         var index = parent ? parent.children.indexOf(node) : null
@@ -513,7 +591,11 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
-    function visitor(node, parents) {
+    /**
+     * @param {Node} _
+     * @param {Array.<Parent>} parents
+     */
+    function visitor(_, parents) {
       n++
 
       if (n === 2) {
@@ -563,6 +645,7 @@ test('unist-util-visit-parents', function (t) {
         }
       ]
     }
+    /** @type {Error} */
     var exception
 
     try {
@@ -591,6 +674,9 @@ test('unist-util-visit-parents', function (t) {
 
     t.end()
 
+    /**
+     * @param {Text} node
+     */
     function fail(node) {
       throw new Error(node.value)
     }
