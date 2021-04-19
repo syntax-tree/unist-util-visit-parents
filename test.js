@@ -526,7 +526,9 @@ test('unist-util-visit-parents', function (t) {
 
   t.test('should recurse into a bazillion nodes', function (t) {
     var expected = 6000
-    var tree = remark().parse(new Array(expected / 4).join('* 1. ') + 'asd')
+    var tree = remark().parse(
+      Array.from({length: expected / 4}).join('* 1. ') + 'asd'
+    )
     var n = 1
 
     visitParents(tree, visitor)
@@ -563,16 +565,16 @@ test('unist-util-visit-parents', function (t) {
         }
       ]
     }
-    var err
+    var exception
 
     try {
       visitParents(tree, 'text', fail)
     } catch (error) {
-      err = error
+      exception = error
     }
 
     t.equal(
-      strip(err.stack)
+      strip(exception.stack)
         .replace(source, '($1:1:1)')
         .split('\n')
         .slice(0, 7)
