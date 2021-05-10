@@ -1,16 +1,14 @@
 /**
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Parent} Parent
- *
- * @typedef {import('unist-util-is').Type} Type
- * @typedef {import('unist-util-is').Props} Props
- * @typedef {import('unist-util-is').TestFunctionAnything} TestFunctionAnything
+ * @typedef {import('unist-util-is').Test} Test
  */
 
 /**
  * @typedef {CONTINUE|SKIP|EXIT} Action Union of the action types
  * @typedef {number} Index Move to the sibling at index next (after node itself is completely traversed). Useful if mutating the tree, such as removing the node the visitor is currently on, or any of its previous siblings (or next siblings, in case of reverse) Results less than 0 or greater than or equal to children.length stop traversing the parent
  * @typedef {[(Action|null|undefined|void)?, (Index|null|undefined)?]} ActionTuple List with one or two values, the first an action, the second an index.
+ * @typedef {null|undefined|Action|Index|ActionTuple|void} VisitorResult Any value that can be returned from a visitor
  */
 
 /**
@@ -28,7 +26,7 @@
  * @callback Visitor
  * @param {V} node Found node
  * @param {Array.<Parent>} ancestors Ancestors of node
- * @returns {null|undefined|Action|Index|ActionTuple|void}
+ * @returns {VisitorResult}
  */
 
 import {convert} from 'unist-util-is'
@@ -51,7 +49,7 @@ export const visitParents =
   /**
    * @type {(
    *   (<T extends Node>(tree: Node, test: T['type']|Partial<T>|import('unist-util-is').TestFunctionPredicate<T>|Array.<T['type']|Partial<T>|import('unist-util-is').TestFunctionPredicate<T>>, visitor: Visitor<T>, reverse?: boolean) => void) &
-   *   ((tree: Node, test: null|undefined|Type|Props|TestFunctionAnything|Array<Type|Props|TestFunctionAnything>, visitor: Visitor<Node>, reverse?: boolean) => void) &
+   *   ((tree: Node, test: Test, visitor: Visitor<Node>, reverse?: boolean) => void) &
    *   ((tree: Node, visitor: Visitor<Node>, reverse?: boolean) => void)
    * )}
    */
@@ -60,7 +58,7 @@ export const visitParents =
      * Visit children of tree which pass a test
      *
      * @param {Node} tree Abstract syntax tree to walk
-     * @param {null|undefined|Type|Props|TestFunctionAnything|Array<Type|Props|TestFunctionAnything>} test test Test node
+     * @param {Test} test test Test node
      * @param {Visitor<Node>} visitor Function to run for each node
      * @param {boolean} [reverse] Fisit the tree in reverse, defaults to false
      */
@@ -146,7 +144,7 @@ export const visitParents =
   )
 
 /**
- * @param {null|undefined|void|Action|Index|ActionTuple} value
+ * @param {VisitorResult} value
  * @returns {ActionTuple}
  */
 function toResult(value) {
