@@ -94,8 +94,12 @@ export const visitParents =
               ? value.name
               : undefined
 
-          visit.displayName =
-            'node (' + color(value.type + (name ? '<' + name + '>' : '')) + ')'
+          Object.defineProperty(visit, 'name', {
+            value:
+              'node (' +
+              color(value.type + (name ? '<' + name + '>' : '')) +
+              ')'
+          })
         }
 
         return visit
