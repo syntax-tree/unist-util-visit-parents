@@ -27,7 +27,7 @@ npm install unist-util-visit-parents
 import remark from 'remark'
 import {visitParents} from 'unist-util-visit-parents'
 
-var tree = remark.parse('Some _emphasis_, **importance**, and `code`.')
+const tree = remark.parse('Some _emphasis_, **importance**, and `code`.')
 
 visitParents(tree, 'strong', visitor)
 

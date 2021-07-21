@@ -14,7 +14,7 @@ import gfm from 'remark-gfm'
 import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
 
 var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
-
+// @ts-expect-error: hush.
 var paragraph = tree.children[0]
 
 var textNodes = 6
@@ -79,7 +79,7 @@ var textAncestors = [
 test('unist-util-visit-parents', function (t) {
   t.throws(
     function () {
-      // @ts-ignore runtime
+      // @ts-expect-error runtime
       visitParents()
     },
     /TypeError: visitor is not a function/,
@@ -88,7 +88,7 @@ test('unist-util-visit-parents', function (t) {
 
   t.throws(
     function () {
-      // @ts-ignore runtime
+      // @ts-expect-error runtime
       visitParents(tree)
     },
     /TypeError: visitor is not a function/,
@@ -189,7 +189,11 @@ test('unist-util-visit-parents', function (t) {
       paragraph.children[6]
     ]
 
-    visitParents(tree, test, visitor)
+    visitParents(
+      tree,
+      (_, index) => typeof index === 'number' && index > 3,
+      visitor
+    )
 
     t.equal(n, 3, 'should visit all passing nodes')
 
@@ -205,14 +209,6 @@ test('unist-util-visit-parents', function (t) {
       var info = '(' + (parent && parent.type) + ':' + index + ')'
       assert.strictEqual(node, nodes[n], 'should be a requested node ' + info)
       n++
-    }
-
-    /**
-     * @param {Node} _
-     * @param {number} index
-     */
-    function test(_, index) {
-      return index > 3
     }
   })
 
@@ -231,6 +227,7 @@ test('unist-util-visit-parents', function (t) {
      * @param {Node} node
      */
     function visitor(node) {
+      // @ts-expect-error: hush.
       var ok = expected.has(node.type) || node.value === '.'
       assert.ok(ok, 'should be a requested type: ' + node.type)
       n++
@@ -319,7 +316,7 @@ test('unist-util-visit-parents', function (t) {
 
     /**
      * @param {Node} node
-     * @returns {'skip'?}
+     * @returns {'skip'|void}
      */
     function visitor(node) {
       assert.strictEqual(node.type, types[n++], 'should be the expected type')
@@ -348,7 +345,7 @@ test('unist-util-visit-parents', function (t) {
 
     /**
      * @param {Node} node
-     * @returns {['skip']}
+     * @returns {['skip']|void}
      */
     function visitor(node) {
       assert.strictEqual(node.type, types[n++], 'should be the expected type')
@@ -516,7 +513,7 @@ test('unist-util-visit-parents', function (t) {
        */
       function visitor(node, parents) {
         var parent = parents[parents.length - 1]
-        var index = parent ? parent.children.indexOf(node) : null
+        var index = parent ? parent.children.indexOf(node) : undefined
 
         assert.strictEqual(
           node.type,
@@ -524,7 +521,7 @@ test('unist-util-visit-parents', function (t) {
           'should be the expected type'
         )
 
-        if (again === false && node.type === 'strong') {
+        if (index !== undefined && again === false && node.type === 'strong') {
           again = true
           return index + 2 // Skip to `inlineCode`.
         }
@@ -559,11 +556,11 @@ test('unist-util-visit-parents', function (t) {
       /**
        * @param {Node} node
        * @param {Array.<Parent>} parents
-       * @returns {[null, number]}
+       * @returns {[null, number]|void}
        */
       function visitor(node, parents) {
         var parent = parents[parents.length - 1]
-        var index = parent ? parent.children.indexOf(node) : null
+        var index = parent ? parent.children.indexOf(node) : undefined
 
         assert.strictEqual(
           node.type,
@@ -571,7 +568,7 @@ test('unist-util-visit-parents', function (t) {
           'should be the expected type'
         )
 
-        if (again === false && node.type === 'strong') {
+        if (index !== undefined && again === false && node.type === 'strong') {
           again = true
           return [null, index + 2] // Skip to `inlineCode`.
         }
@@ -581,6 +578,7 @@ test('unist-util-visit-parents', function (t) {
 
   t.test('should visit added nodes', function (t) {
     var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
+    // @ts-expect-error: hush.
     var other = remark().use(gfm).parse('Another ~~sentence~~.').children[0]
     var l = types.length + 5 // (p, text, delete, text, text)
     var n = 0
@@ -645,7 +643,7 @@ test('unist-util-visit-parents', function (t) {
         }
       ]
     }
-    /** @type {Error} */
+    /** @type {Error|undefined} */
     var exception
 
     try {
@@ -655,7 +653,7 @@ test('unist-util-visit-parents', function (t) {
     }
 
     t.equal(
-      strip(exception.stack)
+      strip((exception || {stack: ''}).stack || '')
         .replace(source, '($1:1:1)')
         .split('\n')
         .slice(0, 7)

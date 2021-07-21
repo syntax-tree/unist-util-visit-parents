@@ -65,7 +65,7 @@ export const visitParents =
     function (tree, test, visitor, reverse) {
       if (typeof test === 'function' && typeof visitor !== 'function') {
         reverse = visitor
-        // @ts-ignore no visitor given, so `visitor` is test.
+        // @ts-expect-error no visitor given, so `visitor` is test.
         visitor = test
         test = null
       }
@@ -82,8 +82,9 @@ export const visitParents =
        */
       function factory(node, index, parents) {
         /** @type {Object.<string, unknown>} */
+        // @ts-expect-error: hush
         var value = typeof node === 'object' && node !== null ? node : {}
-        /** @type {string} */
+        /** @type {string|undefined} */
         var name
 
         if (typeof value.type === 'string') {
@@ -122,14 +123,16 @@ export const visitParents =
             }
           }
 
+          // @ts-expect-error looks like a parent.
           if (node.children && result[0] !== SKIP) {
-            // @ts-ignore looks like a parent.
+            // @ts-expect-error looks like a parent.
             offset = (reverse ? node.children.length : -1) + step
-            // @ts-ignore looks like a parent.
+            // @ts-expect-error looks like a parent.
             grandparents = parents.concat(node)
 
-            // @ts-ignore looks like a parent.
+            // @ts-expect-error looks like a parent.
             while (offset > -1 && offset < node.children.length) {
+              // @ts-expect-error looks like a parent.
               subresult = factory(node.children[offset], offset, grandparents)()
 
               if (subresult[0] === EXIT) {
