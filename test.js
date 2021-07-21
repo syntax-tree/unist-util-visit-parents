@@ -5,8 +5,8 @@
  * @typedef {import('mdast').Text} Text
  */
 
-import path from 'path'
-import assert from 'assert'
+import path from 'node:path'
+import assert from 'node:assert'
 import strip from 'strip-ansi'
 import test from 'tape'
 import remark from 'remark'
