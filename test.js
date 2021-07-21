@@ -13,17 +13,17 @@ import remark from 'remark'
 import gfm from 'remark-gfm'
 import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
 
-var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
+const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
 // @ts-expect-error: hush.
-var paragraph = tree.children[0]
+const paragraph = tree.children[0]
 
-var textNodes = 6
+const textNodes = 6
 
-var stopIndex = 5
-var skipIndex = 7
-var skipReverseIndex = 6
+const stopIndex = 5
+const skipIndex = 7
+const skipReverseIndex = 6
 
-var types = [
+const types = [
   'root', // []
   'paragraph', // [tree]
   'text', // [tree, paragraph]
@@ -37,7 +37,7 @@ var types = [
   'text' // [tree, paragraph]
 ]
 
-var reverseTypes = [
+const reverseTypes = [
   'root',
   'paragraph',
   'text',
@@ -52,7 +52,7 @@ var reverseTypes = [
 ]
 
 /** @type {Array.<Array.<Parent>>} */
-var ancestors = [
+const ancestors = [
   [],
   [tree],
   [tree, paragraph],
@@ -67,7 +67,7 @@ var ancestors = [
 ]
 
 /** @type {Array.<Array.<Parent>>} */
-var textAncestors = [
+const textAncestors = [
   [tree, paragraph],
   [tree, paragraph, paragraph.children[1]],
   [tree, paragraph],
@@ -76,9 +76,9 @@ var textAncestors = [
   [tree, paragraph]
 ]
 
-test('unist-util-visit-parents', function (t) {
+test('unist-util-visit-parents', (t) => {
   t.throws(
-    function () {
+    () => {
       // @ts-expect-error runtime
       visitParents()
     },
@@ -87,7 +87,7 @@ test('unist-util-visit-parents', function (t) {
   )
 
   t.throws(
-    function () {
+    () => {
       // @ts-expect-error runtime
       visitParents(tree)
     },
@@ -95,8 +95,8 @@ test('unist-util-visit-parents', function (t) {
     'should fail without visitor'
   )
 
-  t.test('should iterate over all nodes', function (t) {
-    var n = 0
+  t.test('should iterate over all nodes', (t) => {
+    let n = 0
 
     visitParents(tree, visitor)
 
@@ -119,8 +119,8 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should iterate over all nodes, backwards', function (t) {
-    var n = 0
+  t.test('should iterate over all nodes, backwards', (t) => {
+    let n = 0
 
     visitParents(tree, visitor, true)
 
@@ -141,8 +141,8 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should only visit a given `type`', function (t) {
-    var n = 0
+  t.test('should only visit a given `type`', (t) => {
+    let n = 0
 
     visitParents(tree, 'text', visitor)
 
@@ -161,9 +161,9 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should only visit given `type`s', function (t) {
-    var types = ['text', 'inlineCode']
-    var n = 0
+  t.test('should only visit given `type`s', (t) => {
+    const types = ['text', 'inlineCode']
+    let n = 0
 
     visitParents(tree, types, visitor)
 
@@ -180,10 +180,10 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should accept any `is`-compatible test function', function (t) {
-    var n = 0
+  t.test('should accept any `is`-compatible test function', (t) => {
+    let n = 0
     /** @type {Array.<Node>} */
-    var nodes = [
+    const nodes = [
       paragraph.children[4],
       paragraph.children[5],
       paragraph.children[6]
@@ -204,18 +204,18 @@ test('unist-util-visit-parents', function (t) {
      * @param {Array.<Parent>} parents
      */
     function visitor(node, parents) {
-      var parent = parents[parents.length - 1]
-      var index = parent ? parent.children.indexOf(node) : null
-      var info = '(' + (parent && parent.type) + ':' + index + ')'
+      const parent = parents[parents.length - 1]
+      const index = parent ? parent.children.indexOf(node) : null
+      const info = '(' + (parent && parent.type) + ':' + index + ')'
       assert.strictEqual(node, nodes[n], 'should be a requested node ' + info)
       n++
     }
   })
 
-  t.test('should accept an array of `is`-compatible tests', function (t) {
-    var expected = new Set(['root', 'paragraph', 'emphasis', 'strong'])
-    var tests = [test, 'paragraph', {value: '.'}, 'emphasis', 'strong']
-    var n = 0
+  t.test('should accept an array of `is`-compatible tests', (t) => {
+    const expected = new Set(['root', 'paragraph', 'emphasis', 'strong'])
+    const tests = [test, 'paragraph', {value: '.'}, 'emphasis', 'strong']
+    let n = 0
 
     visitParents(tree, tests, visitor)
 
@@ -228,7 +228,7 @@ test('unist-util-visit-parents', function (t) {
      */
     function visitor(node) {
       // @ts-expect-error: hush.
-      var ok = expected.has(node.type) || node.value === '.'
+      const ok = expected.has(node.type) || node.value === '.'
       assert.ok(ok, 'should be a requested type: ' + node.type)
       n++
     }
@@ -241,8 +241,8 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should stop if `visitor` stops', function (t) {
-    var n = -1
+  t.test('should stop if `visitor` stops', (t) => {
+    let n = -1
 
     visitParents(tree, visitor)
 
@@ -259,8 +259,8 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should stop if `visitor` stops (tuple)', function (t) {
-    var n = -1
+  t.test('should stop if `visitor` stops (tuple)', (t) => {
+    let n = -1
 
     visitParents(tree, visitor)
 
@@ -278,8 +278,8 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should stop if `visitor` stops, backwards', function (t) {
-    var n = 0
+  t.test('should stop if `visitor` stops, backwards', (t) => {
+    let n = 0
 
     visitParents(tree, visitor, true)
 
@@ -300,9 +300,9 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should skip if `visitor` skips', function (t) {
-    var n = 0
-    var count = 0
+  t.test('should skip if `visitor` skips', (t) => {
+    let n = 0
+    let count = 0
 
     visitParents(tree, visitor)
 
@@ -329,9 +329,9 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should skip if `visitor` skips (tuple)', function (t) {
-    var n = 0
-    var count = 0
+  t.test('should skip if `visitor` skips (tuple)', (t) => {
+    let n = 0
+    let count = 0
 
     visitParents(tree, visitor)
 
@@ -358,9 +358,9 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should skip if `visitor` skips, backwards', function (t) {
-    var n = 0
-    var count = 0
+  t.test('should skip if `visitor` skips, backwards', (t) => {
+    let n = 0
+    let count = 0
 
     visitParents(tree, visitor, true)
 
@@ -393,10 +393,10 @@ test('unist-util-visit-parents', function (t) {
 
   t.test(
     'should support a given `index` to iterate over next (`0` to reiterate)',
-    function (t) {
-      var n = 0
-      var again = false
-      var expected = [
+    (t) => {
+      let n = 0
+      let again = false
+      const expected = [
         'root',
         'paragraph',
         'text',
@@ -442,10 +442,10 @@ test('unist-util-visit-parents', function (t) {
 
   t.test(
     'should support a given `index` to iterate over next (`children.length` to skip further children)',
-    function (t) {
-      var n = 0
-      var again = false
-      var expected = [
+    (t) => {
+      let n = 0
+      let again = false
+      const expected = [
         'root',
         'paragraph',
         'text',
@@ -467,7 +467,7 @@ test('unist-util-visit-parents', function (t) {
        * @param {Array.<Parent>} parents
        */
       function visitor(node, parents) {
-        var parent = parents[parents.length - 1]
+        const parent = parents[parents.length - 1]
 
         assert.strictEqual(
           node.type,
@@ -483,58 +483,55 @@ test('unist-util-visit-parents', function (t) {
     }
   )
 
-  t.test(
-    'should support any other given `index` to iterate over next',
-    function (t) {
-      var n = 0
-      var again = false
-      var expected = [
-        'root',
-        'paragraph',
-        'text',
-        'emphasis',
-        'text',
-        'text',
-        'strong',
-        'text',
-        'inlineCode', // Skip to here.
-        'text'
-      ]
+  t.test('should support any other given `index` to iterate over next', (t) => {
+    let n = 0
+    let again = false
+    const expected = [
+      'root',
+      'paragraph',
+      'text',
+      'emphasis',
+      'text',
+      'text',
+      'strong',
+      'text',
+      'inlineCode', // Skip to here.
+      'text'
+    ]
 
-      visitParents(tree, visitor)
+    visitParents(tree, visitor)
 
-      t.equal(n, expected.length, 'should skip nodes')
+    t.equal(n, expected.length, 'should skip nodes')
 
-      t.end()
+    t.end()
 
-      /**
-       * @param {Node} node
-       * @param {Array.<Parent>} parents
-       */
-      function visitor(node, parents) {
-        var parent = parents[parents.length - 1]
-        var index = parent ? parent.children.indexOf(node) : undefined
+    /**
+     * @param {Node} node
+     * @param {Array.<Parent>} parents
+     */
+    function visitor(node, parents) {
+      const parent = parents[parents.length - 1]
+      const index = parent ? parent.children.indexOf(node) : undefined
 
-        assert.strictEqual(
-          node.type,
-          expected[n++],
-          'should be the expected type'
-        )
+      assert.strictEqual(
+        node.type,
+        expected[n++],
+        'should be the expected type'
+      )
 
-        if (index !== undefined && again === false && node.type === 'strong') {
-          again = true
-          return index + 2 // Skip to `inlineCode`.
-        }
+      if (index !== undefined && again === false && node.type === 'strong') {
+        again = true
+        return index + 2 // Skip to `inlineCode`.
       }
     }
-  )
+  })
 
   t.test(
     'should support any other given `index` to iterate over next (tuple)',
-    function (t) {
-      var n = 0
-      var again = false
-      var expected = [
+    (t) => {
+      let n = 0
+      let again = false
+      const expected = [
         'root',
         'paragraph',
         'text',
@@ -559,8 +556,8 @@ test('unist-util-visit-parents', function (t) {
        * @returns {[null, number]|void}
        */
       function visitor(node, parents) {
-        var parent = parents[parents.length - 1]
-        var index = parent ? parent.children.indexOf(node) : undefined
+        const parent = parents[parents.length - 1]
+        const index = parent ? parent.children.indexOf(node) : undefined
 
         assert.strictEqual(
           node.type,
@@ -576,12 +573,12 @@ test('unist-util-visit-parents', function (t) {
     }
   )
 
-  t.test('should visit added nodes', function (t) {
-    var tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
+  t.test('should visit added nodes', (t) => {
+    const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
     // @ts-expect-error: hush.
-    var other = remark().use(gfm).parse('Another ~~sentence~~.').children[0]
-    var l = types.length + 5 // (p, text, delete, text, text)
-    var n = 0
+    const other = remark().use(gfm).parse('Another ~~sentence~~.').children[0]
+    const l = types.length + 5 // (p, text, delete, text, text)
+    let n = 0
 
     visitParents(tree, visitor)
 
@@ -602,12 +599,12 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should recurse into a bazillion nodes', function (t) {
-    var expected = 6000
-    var tree = remark().parse(
+  t.test('should recurse into a bazillion nodes', (t) => {
+    const expected = 6000
+    const tree = remark().parse(
       Array.from({length: expected / 4}).join('* 1. ') + 'asd'
     )
-    var n = 1
+    let n = 1
 
     visitParents(tree, visitor)
 
@@ -620,12 +617,12 @@ test('unist-util-visit-parents', function (t) {
     }
   })
 
-  t.test('should add a pretty stack', function (t) {
-    var source = new RegExp(
+  t.test('should add a pretty stack', (t) => {
+    const source = new RegExp(
       '\\([^)]+\\' + path.sep + '(\\w+.js):\\d+:\\d+\\)',
       'g'
     )
-    var tree = {
+    const tree = {
       type: 'root',
       children: [
         {
@@ -644,7 +641,7 @@ test('unist-util-visit-parents', function (t) {
       ]
     }
     /** @type {Error|undefined} */
-    var exception
+    let exception
 
     try {
       visitParents(tree, 'text', fail)

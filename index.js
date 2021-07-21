@@ -70,8 +70,8 @@ export const visitParents =
         test = null
       }
 
-      var is = convert(test)
-      var step = reverse ? -1 : 1
+      const is = convert(test)
+      const step = reverse ? -1 : 1
 
       factory(tree, null, [])()
 
@@ -83,9 +83,9 @@ export const visitParents =
       function factory(node, index, parents) {
         /** @type {Object.<string, unknown>} */
         // @ts-expect-error: hush
-        var value = typeof node === 'object' && node !== null ? node : {}
+        const value = typeof node === 'object' && node !== null ? node : {}
         /** @type {string|undefined} */
-        var name
+        let name
 
         if (typeof value.type === 'string') {
           name =
@@ -107,13 +107,13 @@ export const visitParents =
 
         function visit() {
           /** @type {ActionTuple} */
-          var result = []
+          let result = []
           /** @type {ActionTuple} */
-          var subresult
+          let subresult
           /** @type {number} */
-          var offset
+          let offset
           /** @type {Array.<Parent>} */
-          var grandparents
+          let grandparents
 
           if (!test || is(node, index, parents[parents.length - 1] || null)) {
             result = toResult(visitor(node, parents))
