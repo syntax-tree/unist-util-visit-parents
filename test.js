@@ -2,6 +2,7 @@
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Parent} Parent
  *
+ * @typedef {import('mdast').Root} Root
  * @typedef {import('mdast').Text} Text
  */
 
@@ -13,9 +14,15 @@ import remark from 'remark'
 import gfm from 'remark-gfm'
 import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
 
-const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
+/** @type {Root} */
 // @ts-expect-error: hush.
+const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
 const paragraph = tree.children[0]
+assert(paragraph.type === 'paragraph')
+const emphasis = paragraph.children[1]
+assert(emphasis.type === 'emphasis')
+const strong = paragraph.children[3]
+assert(strong.type === 'strong')
 
 const textNodes = 6
 
@@ -28,10 +35,10 @@ const types = [
   'paragraph', // [tree]
   'text', // [tree, paragraph]
   'emphasis', // [tree, paragraph]
-  'text', // [tree, paragraph, paragraph.children[1]]
+  'text', // [tree, paragraph, emphasis]
   'text', // [tree, paragraph]
   'strong', // [tree, paragraph]
-  'text', // [tree, paragraph, paragraph.children[3]]
+  'text', // [tree, paragraph, strong]
   'text', // [tree, paragraph]
   'inlineCode', // [tree, paragraph]
   'text' // [tree, paragraph]
@@ -57,10 +64,10 @@ const ancestors = [
   [tree],
   [tree, paragraph],
   [tree, paragraph],
-  [tree, paragraph, paragraph.children[1]],
+  [tree, paragraph, emphasis],
   [tree, paragraph],
   [tree, paragraph],
-  [tree, paragraph, paragraph.children[3]],
+  [tree, paragraph, strong],
   [tree, paragraph],
   [tree, paragraph],
   [tree, paragraph]
@@ -69,9 +76,9 @@ const ancestors = [
 /** @type {Array.<Array.<Parent>>} */
 const textAncestors = [
   [tree, paragraph],
-  [tree, paragraph, paragraph.children[1]],
+  [tree, paragraph, emphasis],
   [tree, paragraph],
-  [tree, paragraph, paragraph.children[3]],
+  [tree, paragraph, strong],
   [tree, paragraph],
   [tree, paragraph]
 ]

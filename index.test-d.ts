@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression, @typescript-eslint/no-empty-function */
 
+import assert from 'node:assert'
 import {expectError} from 'tsd'
-import {Node, Parent} from 'unist'
+import {Node, Literal, Parent} from 'unist'
 import {visitParents, SKIP, EXIT, CONTINUE} from './index.js'
 
 /* Setup */
@@ -10,18 +11,47 @@ const sampleTree = {
   children: [{type: 'heading', depth: 1, children: []}]
 }
 
-interface Heading extends Parent {
-  type: 'heading'
-  depth: number
-  children: Node[]
-}
-
 interface Element extends Parent {
   type: 'element'
   tagName: string
   properties: Record<string, unknown>
   content: Node
   children: Node[]
+}
+
+interface Root extends Parent {
+  type: 'root'
+  children: Flow[]
+}
+
+type Flow = Blockquote | Heading | Paragraph
+
+interface Blockquote extends Parent {
+  type: 'blockquote'
+  children: Flow[]
+}
+
+interface Heading extends Parent {
+  type: 'heading'
+  depth: number
+  children: Phrasing[]
+}
+
+interface Paragraph extends Parent {
+  type: 'paragraph'
+  children: Phrasing[]
+}
+
+type Phrasing = Text | Emphasis
+
+interface Emphasis extends Parent {
+  type: 'emphasis'
+  children: Phrasing[]
+}
+
+interface Text extends Literal {
+  type: 'text'
+  value: string
 }
 
 const isNode = (node: unknown): node is Node =>
@@ -109,3 +139,33 @@ visitParents(sampleTree, 'heading', (_) => [SKIP, 1])
 visitParents(sampleTree, 'heading', (_) => [SKIP])
 expectError(visitParents(sampleTree, 'heading', (_) => [1]))
 expectError(visitParents(sampleTree, 'heading', (_) => ['random', 1]))
+
+/* Should infer children from the given tree. */
+
+const typedTree: Root = {
+  type: 'root',
+  children: [
+    {
+      type: 'blockquote',
+      children: [{type: 'paragraph', children: [{type: 'text', value: 'a'}]}]
+    },
+    {
+      type: 'paragraph',
+      children: [
+        {
+          type: 'emphasis',
+          children: [{type: 'emphasis', children: [{type: 'text', value: 'b'}]}]
+        },
+        {type: 'text', value: 'c'}
+      ]
+    }
+  ]
+}
+
+visitParents(typedTree, (_: Root | Flow | Phrasing) => {})
+const blockquote = typedTree.children[0]
+assert(blockquote.type === 'blockquote')
+visitParents(blockquote, (_: Flow | Phrasing) => {})
+const paragraph = typedTree.children[1]
+assert(paragraph.type === 'paragraph')
+visitParents(paragraph, (_: Paragraph | Phrasing) => {})

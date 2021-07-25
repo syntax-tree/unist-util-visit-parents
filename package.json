@@ -42,6 +42,7 @@
     "color.js",
     "color.browser.d.ts",
     "color.browser.js",
+    "complex-types.d.ts",
     "index.d.ts",
     "index.js"
   ],
@@ -50,7 +51,7 @@
     "unist-util-is": "^5.0.0"
   },
   "devDependencies": {
-    "@types/mdast": "^3.0.3",
+    "@types/mdast": "^3.0.0",
     "@types/tape": "^4.0.0",
     "c8": "^7.0.0",
     "prettier": "^2.0.0",
@@ -68,7 +69,7 @@
   },
   "scripts": {
     "prepack": "npm run build && npm run format",
-    "build": "rimraf \"*.d.ts\" && tsc && tsd && type-coverage",
+    "build": "rimraf \"{color,color.browser,index,test}.d.ts\" && tsc && tsd && type-coverage",
     "format": "remark . -qfo && prettier . --write --loglevel warn && xo --fix",
     "test-api": "node test.js",
     "test-coverage": "c8 --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 --reporter lcov node test.js",
