@@ -4,6 +4,9 @@
  *
  * @typedef {import('mdast').Root} Root
  * @typedef {import('mdast').Text} Text
+ *
+ * @typedef {import('hast').Root} HastRoot
+ * @typedef {import('hast').Text} HastText
  */
 
 import path from 'node:path'
@@ -629,6 +632,7 @@ test('unist-util-visit-parents', (t) => {
       '\\([^)]+\\' + path.sep + '(\\w+.js):\\d+:\\d+\\)',
       'g'
     )
+    /** @type {HastRoot} */
     const tree = {
       type: 'root',
       children: [
@@ -638,8 +642,8 @@ test('unist-util-visit-parents', (t) => {
           tagName: 'div',
           children: [
             {
-              // A xast-like node.
               type: 'element',
+              // @ts-expect-error: A xast-like node.
               name: 'xml',
               children: [{type: 'text', value: 'Oh no!'}]
             }
@@ -677,7 +681,7 @@ test('unist-util-visit-parents', (t) => {
     t.end()
 
     /**
-     * @param {Text} node
+     * @param {HastText} node
      */
     function fail(node) {
       throw new Error(node.value)

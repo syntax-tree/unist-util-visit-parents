@@ -51,6 +51,7 @@
     "unist-util-is": "^5.0.0"
   },
   "devDependencies": {
+    "@types/hast": "^2.0.0",
     "@types/mdast": "^3.0.0",
     "@types/tape": "^4.0.0",
     "c8": "^7.0.0",

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression, @typescript-eslint/no-empty-function */
 
 import assert from 'node:assert'
-import {expectError} from 'tsd'
+import {expectError, expectType} from 'tsd'
 import {Node, Literal, Parent} from 'unist'
 import {visitParents, SKIP, EXIT, CONTINUE} from './index.js'
 
 /* Setup */
-const sampleTree = {
+const sampleTree: Root = {
   type: 'root',
   children: [{type: 'heading', depth: 1, children: []}]
 }
@@ -85,30 +85,27 @@ expectError(visitParents(sampleTree, 'heading', (_: Element) => {}))
 /* Visit with object test. */
 visitParents(sampleTree, {type: 'heading'}, (_) => {})
 visitParents(sampleTree, {random: 'property'}, (_) => {})
-
 visitParents(sampleTree, {type: 'heading'}, (_: Heading) => {})
 visitParents(sampleTree, {type: 'heading', depth: 2}, (_: Heading) => {})
 expectError(visitParents(sampleTree, {type: 'element'}, (_: Heading) => {}))
 expectError(
   visitParents(sampleTree, {type: 'heading', depth: '2'}, (_: Heading) => {})
 )
-
 visitParents(sampleTree, {type: 'element'}, (_: Element) => {})
 visitParents(
   sampleTree,
   {type: 'element', tagName: 'section'},
   (_: Element) => {}
 )
-
 expectError(visitParents(sampleTree, {type: 'heading'}, (_: Element) => {}))
-
 expectError(
   visitParents(sampleTree, {type: 'element', tagName: true}, (_: Element) => {})
 )
 
 /* Visit with function test. */
-visitParents(sampleTree, headingTest, (_) => {})
-visitParents(sampleTree, headingTest, (_: Heading) => {})
+visitParents(sampleTree, headingTest, (node) => {
+  expectType<Heading>(node)
+})
 expectError(visitParents(sampleTree, headingTest, (_: Element) => {}))
 
 visitParents(sampleTree, elementTest, (_) => {})
@@ -162,10 +159,20 @@ const typedTree: Root = {
   ]
 }
 
-visitParents(typedTree, (_: Root | Flow | Phrasing) => {})
+visitParents(typedTree, (node) => {
+  expectType<Root | Flow | Phrasing>(node)
+})
 const blockquote = typedTree.children[0]
 assert(blockquote.type === 'blockquote')
-visitParents(blockquote, (_: Flow | Phrasing) => {})
+visitParents(blockquote, (node) => {
+  expectType<Flow | Phrasing>(node)
+})
 const paragraph = typedTree.children[1]
 assert(paragraph.type === 'paragraph')
-visitParents(paragraph, (_: Paragraph | Phrasing) => {})
+visitParents(paragraph, (node) => {
+  expectType<Paragraph | Phrasing>(node)
+})
+const emphasis = paragraph.children[1]
+assert(emphasis.type === 'emphasis')
+// To do: error: `flow` cannot exist in phrasing.
+visitParents(emphasis, 'blockquote', (_: Flow) => {})
