@@ -1,12 +1,12 @@
 import type {Node, Parent} from 'unist'
 
-export type NodeInTree<
+export type InclusiveDescendant<
   Tree extends Node = never,
   Found = void
 > = Tree extends Parent
   ?
       | Tree
-      | NodeInTree<
+      | InclusiveDescendant<
           Exclude<Tree['children'][number], Found | Tree>,
           Found | Tree
         >
