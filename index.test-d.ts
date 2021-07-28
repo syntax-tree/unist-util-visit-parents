@@ -74,33 +74,47 @@ expectError(visitParents(sampleTree, (_: Heading) => {}))
 /* Visit with type test. */
 visitParents(sampleTree, 'heading', (_) => {})
 visitParents(sampleTree, 'heading', (_: Heading) => {})
-expectError(visitParents(sampleTree, 'not-a-heading', (_: Heading) => {}))
-expectError(visitParents(sampleTree, 'element', (_: Heading) => {}))
+visitParents(sampleTree, 'not-a-heading', (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
+visitParents(sampleTree, 'element', (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
 
 visitParents(sampleTree, 'element', (_) => {})
 visitParents(sampleTree, 'element', (_: Element) => {})
-expectError(visitParents(sampleTree, 'not-an-element', (_: Element) => {}))
+visitParents(sampleTree, 'not-an-element', (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
 expectError(visitParents(sampleTree, 'heading', (_: Element) => {}))
 
 /* Visit with object test. */
-visitParents(sampleTree, {type: 'heading'}, (_) => {})
+visitParents(sampleTree, {depth: 1}, (_) => {})
 visitParents(sampleTree, {random: 'property'}, (_) => {})
-visitParents(sampleTree, {type: 'heading'}, (_: Heading) => {})
+visitParents(sampleTree, {depth: 1}, (_: Heading) => {})
 visitParents(sampleTree, {type: 'heading', depth: 2}, (_: Heading) => {})
 expectError(visitParents(sampleTree, {type: 'element'}, (_: Heading) => {}))
-expectError(
-  visitParents(sampleTree, {type: 'heading', depth: '2'}, (_: Heading) => {})
-)
-visitParents(sampleTree, {type: 'element'}, (_: Element) => {})
+visitParents(sampleTree, {type: 'heading', depth: '2'}, (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
+visitParents(sampleTree, {tagName: 'section'}, (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
 visitParents(
   sampleTree,
   {type: 'element', tagName: 'section'},
   (_: Element) => {}
 )
 expectError(visitParents(sampleTree, {type: 'heading'}, (_: Element) => {}))
-expectError(
-  visitParents(sampleTree, {type: 'element', tagName: true}, (_: Element) => {})
-)
+visitParents(sampleTree, {type: 'element', tagName: true}, (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
 
 /* Visit with function test. */
 visitParents(sampleTree, headingTest, (node) => {
@@ -110,7 +124,10 @@ expectError(visitParents(sampleTree, headingTest, (_: Element) => {}))
 
 visitParents(sampleTree, elementTest, (_) => {})
 visitParents(sampleTree, elementTest, (_: Element) => {})
-expectError(visitParents(sampleTree, elementTest, (_: Heading) => {}))
+visitParents(sampleTree, elementTest, (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
 
 /* Visit with array of tests. */
 visitParents(

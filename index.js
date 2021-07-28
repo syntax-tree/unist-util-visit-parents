@@ -48,8 +48,7 @@ export const EXIT = false
 export const visitParents =
   /**
    * @type {(
-   *   (<Needle extends Node>(tree: Node, test: Needle['type']|Partial<Needle>|import('unist-util-is').TestFunctionPredicate<Needle>|Array.<Needle['type']|Partial<Needle>|import('unist-util-is').TestFunctionPredicate<Needle>>, visitor: Visitor<Needle>, reverse?: boolean) => void) &
-   *   (<Tree extends Node>(tree: Tree, test: Test, visitor: Visitor<import('./complex-types').InclusiveDescendant<Tree>>, reverse?: boolean) => void) &
+   *   (<Tree extends Node, Check extends Test>(tree: Tree, test: Check, visitor: Visitor<import('./complex-types').Matches<import('./complex-types').InclusiveDescendant<Tree>, Check>>, reverse?: boolean) => void) &
    *   (<Tree extends Node>(tree: Tree, visitor: Visitor<import('./complex-types').InclusiveDescendant<Tree>>, reverse?: boolean) => void)
    * )}
    */

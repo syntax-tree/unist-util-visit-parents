@@ -96,6 +96,10 @@
     "atLeast": 100,
     "detail": true,
     "strict": true,
-    "ignoreCatch": true
+    "ignoreCatch": true,
+    "#": "needed `any`s",
+    "ignoreFiles": [
+      "complex-types.d.ts"
+    ]
   }
 }
