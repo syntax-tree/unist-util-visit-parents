@@ -45,7 +45,7 @@ type MatchesOne<Value, Check> =
 export type Matches<Value, Check> =
   // Is this a list?
   Check extends any[]
-    ? MatchesOne<Value, Check[number]>
+    ? MatchesOne<Value, Check[keyof Check]>
     : MatchesOne<Value, Check>
 
 /* eslint-enable @typescript-eslint/ban-types */
