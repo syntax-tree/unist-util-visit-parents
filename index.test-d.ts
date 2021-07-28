@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression, @typescript-eslint/no-empty-function */
 
-import assert from 'node:assert'
 import {expectError, expectType} from 'tsd'
 import {Node, Literal, Parent} from 'unist'
+import {is} from 'unist-util-is'
 import {visitParents, SKIP, EXIT, CONTINUE} from './index.js'
 
 /* Setup */
@@ -179,17 +179,26 @@ const typedTree: Root = {
 visitParents(typedTree, (node) => {
   expectType<Root | Flow | Phrasing>(node)
 })
+
 const blockquote = typedTree.children[0]
-assert(blockquote.type === 'blockquote')
-visitParents(blockquote, (node) => {
-  expectType<Flow | Phrasing>(node)
-})
+if (is<Blockquote>(blockquote, 'blockquote')) {
+  visitParents(blockquote, (node) => {
+    expectType<Flow | Phrasing>(node)
+  })
+}
+
 const paragraph = typedTree.children[1]
-assert(paragraph.type === 'paragraph')
-visitParents(paragraph, (node) => {
-  expectType<Paragraph | Phrasing>(node)
-})
-const emphasis = paragraph.children[1]
-assert(emphasis.type === 'emphasis')
-// To do: error: `flow` cannot exist in phrasing.
-visitParents(emphasis, 'blockquote', (_: Flow) => {})
+if (is<Paragraph>(paragraph, 'paragraph')) {
+  visitParents(paragraph, (node) => {
+    expectType<Paragraph | Phrasing>(node)
+  })
+
+  const child = paragraph.children[1]
+
+  if (is<Emphasis>(child, 'emphasis')) {
+    visitParents(child, 'blockquote', (node) => {
+      // `blockquote` does not exist in phrasing.
+      expectType<never>(node)
+    })
+  }
+}

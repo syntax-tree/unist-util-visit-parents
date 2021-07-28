@@ -18,7 +18,7 @@ import gfm from 'remark-gfm'
 import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
 
 /** @type {Root} */
-// @ts-expect-error: hush.
+// @ts-expect-error: return type is known to be `Root`.
 const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
 const paragraph = tree.children[0]
 assert(paragraph.type === 'paragraph')
