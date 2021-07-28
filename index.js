@@ -45,6 +45,14 @@ export const SKIP = 'skip'
  */
 export const EXIT = false
 
+/**
+ * Visit children of tree which pass a test
+ *
+ * @param tree Abstract syntax tree to walk
+ * @param test Test node, optional
+ * @param visitor Function to run for each node
+ * @param reverse Fisit the tree in reverse, defaults to false
+ */
 export const visitParents =
   /**
    * @type {(
@@ -54,12 +62,10 @@ export const visitParents =
    */
   (
     /**
-     * Visit children of tree which pass a test
-     *
-     * @param {Node} tree Abstract syntax tree to walk
-     * @param {Test} test test Test node
-     * @param {Visitor<Node>} visitor Function to run for each node
-     * @param {boolean} [reverse] Fisit the tree in reverse, defaults to false
+     * @param {Node} tree
+     * @param {Test} test
+     * @param {Visitor<Node>} visitor
+     * @param {boolean} [reverse]
      */
     function (tree, test, visitor, reverse) {
       if (typeof test === 'function' && typeof visitor !== 'function') {
