@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression, @typescript-eslint/no-empty-function */
 
-import {expectError, expectType} from 'tsd'
+import {expectAssignable, expectError, expectType, expectNotType} from 'tsd'
 import {Node, Literal, Parent} from 'unist'
 import {is} from 'unist-util-is'
 import {visitParents, SKIP, EXIT, CONTINUE} from './index.js'
 
 /* Setup */
+const implicitTree = {
+  type: 'root',
+  children: [{type: 'heading', depth: 1, children: []}]
+}
+
 const sampleTree: Root = {
   type: 'root',
   children: [{type: 'heading', depth: 1, children: []}]
@@ -91,6 +96,10 @@ expectError(visitParents(sampleTree))
 visitParents(sampleTree, (node) => {
   expectType<Root | Content>(node)
 })
+visitParents(implicitTree, (node) => {
+  expectAssignable<Node>(node)
+  expectNotType<Node>(node) // Objects are too loose.
+})
 
 /* Visit with type test. */
 visitParents(sampleTree, 'heading', (node) => {
@@ -101,27 +110,35 @@ visitParents(sampleTree, 'element', (node) => {
   expectType<never>(node)
 })
 expectError(visitParents(sampleTree, 'heading', (_: Element) => {}))
+visitParents(implicitTree, 'heading', (node) => {
+  expectType<never>(node) // Objects are too loose.
+  expectAssignable<Heading>(node)
+  expectNotType<Heading>(node) // Objects are too loose.
+})
 
 /* Visit with object test. */
 visitParents(sampleTree, {depth: 1}, (node) => {
   expectType<Heading>(node)
 })
-visitParents(sampleTree, {random: 'property'}, (node) => {
+visitParents(sampleTree, {random: 'property'} as const, (node) => {
   expectType<never>(node)
 })
-visitParents(sampleTree, {type: 'heading', depth: '2'}, (node) => {
+visitParents(sampleTree, {type: 'heading', depth: '1'} as const, (node) => {
   // Not in tree.
   expectType<never>(node)
 })
-visitParents(sampleTree, {tagName: 'section'}, (node) => {
+visitParents(sampleTree, {tagName: 'section'} as const, (node) => {
   // Not in tree.
   expectType<never>(node)
 })
-visitParents(sampleTree, {type: 'element', tagName: 'section'}, (node) => {
-  // Not in tree.
-  expectType<never>(node)
+expectError(
+  visitParents(sampleTree, {type: 'heading'} as const, (_: Element) => {})
+)
+visitParents(implicitTree, {type: 'heading'} as const, (node) => {
+  expectType<never>(node) // Objects are too loose.
+  expectAssignable<Heading>(node)
+  expectNotType<Heading>(node) // Objects are too loose.
 })
-expectError(visitParents(sampleTree, {type: 'heading'}, (_: Element) => {}))
 
 /* Visit with function test. */
 visitParents(sampleTree, headingTest, (node) => {
@@ -131,6 +148,11 @@ expectError(visitParents(sampleTree, headingTest, (_: Element) => {}))
 visitParents(sampleTree, elementTest, (node) => {
   // Not in tree.
   expectType<never>(node)
+})
+visitParents(implicitTree, headingTest, (node) => {
+  expectType<never>(node) // Objects are too loose.
+  expectAssignable<Heading>(node)
+  expectNotType<Heading>(node) // Objects are too loose.
 })
 
 /* Visit with array of tests. */
