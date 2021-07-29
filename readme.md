@@ -24,31 +24,40 @@ npm install unist-util-visit-parents
 ## Use
 
 ```js
-import remark from 'remark'
 import {visitParents} from 'unist-util-visit-parents'
+import {fromMarkdown} from 'mdast-util-from-markdown'
 
-const tree = remark.parse('Some _emphasis_, **importance**, and `code`.')
+const tree = fromMarkdown('Some _emphasis_, **importance**, and `code`.')
 
-visitParents(tree, 'strong', visitor)
-
-function visitor(node, ancestors) {
-  console.log(ancestors)
-}
+visitParents(tree, 'strong', (node, ancestors) => {
+  console.log(node.type, ancestors)
+})
 ```
 
 Yields:
 
 ```js
-[ { type: 'root', children: [ [Object] ] },
-  { type: 'paragraph',
-    children:
-     [ [Object],
-       [Object],
-       [Object],
-       [Object],
-       [Object],
-       [Object],
-       [Object] ] } ]
+strong
+[
+  {
+    type: 'root',
+    children: [[Object]],
+    position: {start: [Object], end: [Object]}
+  },
+  {
+    type: 'paragraph',
+    children: [
+      [Object],
+      [Object],
+      [Object],
+      [Object],
+      [Object],
+      [Object],
+      [Object]
+    ],
+    position: {start: [Object], end: [Object]}
+  }
+]
 ```
 
 ## API
