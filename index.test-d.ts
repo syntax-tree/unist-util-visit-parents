@@ -1,19 +1,39 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression, @typescript-eslint/no-empty-function */
 
-import {expectError} from 'tsd'
-import {Node, Parent} from 'unist'
+import {expectAssignable, expectError, expectType, expectNotType} from 'tsd'
+import {Node, Literal, Parent} from 'unist'
+import {is} from 'unist-util-is'
 import {visitParents, SKIP, EXIT, CONTINUE} from './index.js'
 
 /* Setup */
-const sampleTree = {
+const implicitTree = {
   type: 'root',
   children: [{type: 'heading', depth: 1, children: []}]
 }
 
-interface Heading extends Parent {
-  type: 'heading'
-  depth: number
-  children: Node[]
+const sampleTree: Root = {
+  type: 'root',
+  children: [{type: 'heading', depth: 1, children: []}]
+}
+
+const complexTree: Root = {
+  type: 'root',
+  children: [
+    {
+      type: 'blockquote',
+      children: [{type: 'paragraph', children: [{type: 'text', value: 'a'}]}]
+    },
+    {
+      type: 'paragraph',
+      children: [
+        {
+          type: 'emphasis',
+          children: [{type: 'emphasis', children: [{type: 'text', value: 'b'}]}]
+        },
+        {type: 'text', value: 'c'}
+      ]
+    }
+  ]
 }
 
 interface Element extends Parent {
@@ -22,6 +42,43 @@ interface Element extends Parent {
   properties: Record<string, unknown>
   content: Node
   children: Node[]
+}
+
+type Content = Flow | Phrasing
+
+interface Root extends Parent {
+  type: 'root'
+  children: Flow[]
+}
+
+type Flow = Blockquote | Heading | Paragraph
+
+interface Blockquote extends Parent {
+  type: 'blockquote'
+  children: Flow[]
+}
+
+interface Heading extends Parent {
+  type: 'heading'
+  depth: number
+  children: Phrasing[]
+}
+
+interface Paragraph extends Parent {
+  type: 'paragraph'
+  children: Phrasing[]
+}
+
+type Phrasing = Text | Emphasis
+
+interface Emphasis extends Parent {
+  type: 'emphasis'
+  children: Phrasing[]
+}
+
+interface Text extends Literal {
+  type: 'text'
+  value: string
 }
 
 const isNode = (node: unknown): node is Node =>
@@ -36,76 +93,116 @@ expectError(visitParents())
 expectError(visitParents(sampleTree))
 
 /* Visit without test. */
-visitParents(sampleTree, (_) => {})
-visitParents(sampleTree, (_: Node) => {})
-expectError(visitParents(sampleTree, (_: Element) => {}))
-expectError(visitParents(sampleTree, (_: Heading) => {}))
+visitParents(sampleTree, (node) => {
+  expectType<Root | Content>(node)
+})
+visitParents(implicitTree, (node) => {
+  expectAssignable<Node>(node)
+  expectNotType<Node>(node) // Objects are too loose.
+})
 
 /* Visit with type test. */
-visitParents(sampleTree, 'heading', (_) => {})
-visitParents(sampleTree, 'heading', (_: Heading) => {})
-expectError(visitParents(sampleTree, 'not-a-heading', (_: Heading) => {}))
-expectError(visitParents(sampleTree, 'element', (_: Heading) => {}))
-
-visitParents(sampleTree, 'element', (_) => {})
-visitParents(sampleTree, 'element', (_: Element) => {})
-expectError(visitParents(sampleTree, 'not-an-element', (_: Element) => {}))
+visitParents(sampleTree, 'heading', (node) => {
+  expectType<Heading>(node)
+})
+visitParents(sampleTree, 'element', (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
 expectError(visitParents(sampleTree, 'heading', (_: Element) => {}))
+visitParents(implicitTree, 'heading', (node) => {
+  expectType<never>(node) // Objects are too loose.
+  expectAssignable<Heading>(node)
+  expectNotType<Heading>(node) // Objects are too loose.
+})
 
 /* Visit with object test. */
-visitParents(sampleTree, {type: 'heading'}, (_) => {})
-visitParents(sampleTree, {random: 'property'}, (_) => {})
-
-visitParents(sampleTree, {type: 'heading'}, (_: Heading) => {})
-visitParents(sampleTree, {type: 'heading', depth: 2}, (_: Heading) => {})
-expectError(visitParents(sampleTree, {type: 'element'}, (_: Heading) => {}))
+visitParents(sampleTree, {depth: 1}, (node) => {
+  expectType<Heading>(node)
+})
+visitParents(sampleTree, {random: 'property'} as const, (node) => {
+  expectType<never>(node)
+})
+visitParents(sampleTree, {type: 'heading', depth: '1'} as const, (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
+visitParents(sampleTree, {tagName: 'section'} as const, (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
 expectError(
-  visitParents(sampleTree, {type: 'heading', depth: '2'}, (_: Heading) => {})
+  visitParents(sampleTree, {type: 'heading'} as const, (_: Element) => {})
 )
-
-visitParents(sampleTree, {type: 'element'}, (_: Element) => {})
-visitParents(
-  sampleTree,
-  {type: 'element', tagName: 'section'},
-  (_: Element) => {}
-)
-
-expectError(visitParents(sampleTree, {type: 'heading'}, (_: Element) => {}))
-
-expectError(
-  visitParents(sampleTree, {type: 'element', tagName: true}, (_: Element) => {})
-)
+visitParents(implicitTree, {type: 'heading'} as const, (node) => {
+  expectType<never>(node) // Objects are too loose.
+  expectAssignable<Heading>(node)
+  expectNotType<Heading>(node) // Objects are too loose.
+})
 
 /* Visit with function test. */
-visitParents(sampleTree, headingTest, (_) => {})
-visitParents(sampleTree, headingTest, (_: Heading) => {})
+visitParents(sampleTree, headingTest, (node) => {
+  expectType<Heading>(node)
+})
 expectError(visitParents(sampleTree, headingTest, (_: Element) => {}))
-
-visitParents(sampleTree, elementTest, (_) => {})
-visitParents(sampleTree, elementTest, (_: Element) => {})
-expectError(visitParents(sampleTree, elementTest, (_: Heading) => {}))
+visitParents(sampleTree, elementTest, (node) => {
+  // Not in tree.
+  expectType<never>(node)
+})
+visitParents(implicitTree, headingTest, (node) => {
+  expectType<never>(node) // Objects are too loose.
+  expectAssignable<Heading>(node)
+  expectNotType<Heading>(node) // Objects are too loose.
+})
 
 /* Visit with array of tests. */
-visitParents(
-  sampleTree,
-  ['ParagraphNode', {type: 'element'}, headingTest],
-  (_) => {}
-)
+visitParents(sampleTree, ['heading', {depth: 1}, headingTest], (node) => {
+  // Unfortunately TS casts things in arrays too vague.
+  expectType<Root | Content>(node)
+})
 
 /* Visit returns action. */
-visitParents(sampleTree, 'heading', (_) => CONTINUE)
-visitParents(sampleTree, 'heading', (_) => EXIT)
-visitParents(sampleTree, 'heading', (_) => SKIP)
-expectError(visitParents(sampleTree, 'heading', (_) => 'random'))
+visitParents(sampleTree, () => CONTINUE)
+visitParents(sampleTree, () => EXIT)
+visitParents(sampleTree, () => SKIP)
+expectError(visitParents(sampleTree, () => 'random'))
 
 /* Visit returns index. */
-visitParents(sampleTree, 'heading', (_) => 0)
-visitParents(sampleTree, 'heading', (_) => 1)
+visitParents(sampleTree, () => 0)
+visitParents(sampleTree, () => 1)
 
 /* Visit returns tuple. */
-visitParents(sampleTree, 'heading', (_) => [CONTINUE, 1])
-visitParents(sampleTree, 'heading', (_) => [EXIT, 1])
-visitParents(sampleTree, 'heading', (_) => [SKIP, 1])
-visitParents(sampleTree, 'heading', (_) => [SKIP])
-expectError(visitParents(sampleTree, 'heading', (_) => [1]))
-expectError(visitParents(sampleTree, 'heading', (_) => ['random', 1]))
+visitParents(sampleTree, () => [CONTINUE, 1])
+visitParents(sampleTree, () => [EXIT, 1])
+visitParents(sampleTree, () => [SKIP, 1])
+visitParents(sampleTree, () => [SKIP])
+expectError(visitParents(sampleTree, () => [1]))
+expectError(visitParents(sampleTree, () => ['random', 1]))
+
+/* Should infer children from the given tree. */
+visitParents(complexTree, (node) => {
+  expectType<Root | Content>(node)
+})
+
+const blockquote = complexTree.children[0]
+if (is<Blockquote>(blockquote, 'blockquote')) {
+  visitParents(blockquote, (node) => {
+    expectType<Content>(node)
+  })
+}
+
+const paragraph = complexTree.children[1]
+if (is<Paragraph>(paragraph, 'paragraph')) {
+  visitParents(paragraph, (node) => {
+    expectType<Paragraph | Phrasing>(node)
+  })
+
+  const child = paragraph.children[1]
+
+  if (is<Emphasis>(child, 'emphasis')) {
+    visitParents(child, 'blockquote', (node) => {
+      // `blockquote` does not exist in phrasing.
+      expectType<never>(node)
+    })
+  }
+}

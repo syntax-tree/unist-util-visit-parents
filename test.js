@@ -2,7 +2,11 @@
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Parent} Parent
  *
+ * @typedef {import('mdast').Root} Root
  * @typedef {import('mdast').Text} Text
+ *
+ * @typedef {import('hast').Root} HastRoot
+ * @typedef {import('hast').Text} HastText
  */
 
 import path from 'node:path'
@@ -13,9 +17,15 @@ import remark from 'remark'
 import gfm from 'remark-gfm'
 import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
 
+/** @type {Root} */
+// @ts-expect-error: return type is known to be `Root`.
 const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
-// @ts-expect-error: hush.
 const paragraph = tree.children[0]
+assert(paragraph.type === 'paragraph')
+const emphasis = paragraph.children[1]
+assert(emphasis.type === 'emphasis')
+const strong = paragraph.children[3]
+assert(strong.type === 'strong')
 
 const textNodes = 6
 
@@ -28,10 +38,10 @@ const types = [
   'paragraph', // [tree]
   'text', // [tree, paragraph]
   'emphasis', // [tree, paragraph]
-  'text', // [tree, paragraph, paragraph.children[1]]
+  'text', // [tree, paragraph, emphasis]
   'text', // [tree, paragraph]
   'strong', // [tree, paragraph]
-  'text', // [tree, paragraph, paragraph.children[3]]
+  'text', // [tree, paragraph, strong]
   'text', // [tree, paragraph]
   'inlineCode', // [tree, paragraph]
   'text' // [tree, paragraph]
@@ -57,10 +67,10 @@ const ancestors = [
   [tree],
   [tree, paragraph],
   [tree, paragraph],
-  [tree, paragraph, paragraph.children[1]],
+  [tree, paragraph, emphasis],
   [tree, paragraph],
   [tree, paragraph],
-  [tree, paragraph, paragraph.children[3]],
+  [tree, paragraph, strong],
   [tree, paragraph],
   [tree, paragraph],
   [tree, paragraph]
@@ -69,9 +79,9 @@ const ancestors = [
 /** @type {Array.<Array.<Parent>>} */
 const textAncestors = [
   [tree, paragraph],
-  [tree, paragraph, paragraph.children[1]],
+  [tree, paragraph, emphasis],
   [tree, paragraph],
-  [tree, paragraph, paragraph.children[3]],
+  [tree, paragraph, strong],
   [tree, paragraph],
   [tree, paragraph]
 ]
@@ -622,6 +632,7 @@ test('unist-util-visit-parents', (t) => {
       '\\([^)]+\\' + path.sep + '(\\w+.js):\\d+:\\d+\\)',
       'g'
     )
+    /** @type {HastRoot} */
     const tree = {
       type: 'root',
       children: [
@@ -631,8 +642,8 @@ test('unist-util-visit-parents', (t) => {
           tagName: 'div',
           children: [
             {
-              // A xast-like node.
               type: 'element',
+              // @ts-expect-error: A xast-like node.
               name: 'xml',
               children: [{type: 'text', value: 'Oh no!'}]
             }
@@ -670,7 +681,7 @@ test('unist-util-visit-parents', (t) => {
     t.end()
 
     /**
-     * @param {Text} node
+     * @param {HastText} node
      */
     function fail(node) {
       throw new Error(node.value)

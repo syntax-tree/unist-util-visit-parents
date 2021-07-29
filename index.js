@@ -45,22 +45,27 @@ export const SKIP = 'skip'
  */
 export const EXIT = false
 
+/**
+ * Visit children of tree which pass a test
+ *
+ * @param tree Abstract syntax tree to walk
+ * @param test Test node, optional
+ * @param visitor Function to run for each node
+ * @param reverse Visit the tree in reverse order, defaults to false
+ */
 export const visitParents =
   /**
    * @type {(
-   *   (<T extends Node>(tree: Node, test: T['type']|Partial<T>|import('unist-util-is').TestFunctionPredicate<T>|Array.<T['type']|Partial<T>|import('unist-util-is').TestFunctionPredicate<T>>, visitor: Visitor<T>, reverse?: boolean) => void) &
-   *   ((tree: Node, test: Test, visitor: Visitor<Node>, reverse?: boolean) => void) &
-   *   ((tree: Node, visitor: Visitor<Node>, reverse?: boolean) => void)
+   *   (<Tree extends Node, Check extends Test>(tree: Tree, test: Check, visitor: Visitor<import('./complex-types').Matches<import('./complex-types').InclusiveDescendant<Tree>, Check>>, reverse?: boolean) => void) &
+   *   (<Tree extends Node>(tree: Tree, visitor: Visitor<import('./complex-types').InclusiveDescendant<Tree>>, reverse?: boolean) => void)
    * )}
    */
   (
     /**
-     * Visit children of tree which pass a test
-     *
-     * @param {Node} tree Abstract syntax tree to walk
-     * @param {Test} test test Test node
-     * @param {Visitor<Node>} visitor Function to run for each node
-     * @param {boolean} [reverse] Fisit the tree in reverse, defaults to false
+     * @param {Node} tree
+     * @param {Test} test
+     * @param {Visitor<Node>} visitor
+     * @param {boolean} [reverse]
      */
     function (tree, test, visitor, reverse) {
       if (typeof test === 'function' && typeof visitor !== 'function') {
