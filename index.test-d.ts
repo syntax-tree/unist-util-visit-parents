@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-confusing-void-expression, @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-empty-function */
 
 import {expectAssignable, expectError, expectType, expectNotType} from 'tsd'
 import {Node, Literal, Parent} from 'unist'
