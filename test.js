@@ -2,23 +2,18 @@
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Parent} Parent
  *
- * @typedef {import('mdast').Root} Root
- * @typedef {import('mdast').Text} Text
- *
  * @typedef {import('hast').Root} HastRoot
  * @typedef {import('hast').Text} HastText
  */
 
 import path from 'node:path'
 import assert from 'node:assert'
-import strip from 'strip-ansi'
 import test from 'tape'
-import remark from 'remark'
-import gfm from 'remark-gfm'
+import stripAnsi from 'strip-ansi'
+import {remark} from 'remark'
+import remarkGfm from 'remark-gfm'
 import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
 
-/** @type {Root} */
-// @ts-expect-error: return type is known to be `Root`.
 const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
 const paragraph = tree.children[0]
 assert(paragraph.type === 'paragraph')
@@ -585,8 +580,8 @@ test('unist-util-visit-parents', (t) => {
 
   t.test('should visit added nodes', (t) => {
     const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
-    // @ts-expect-error: hush.
-    const other = remark().use(gfm).parse('Another ~~sentence~~.').children[0]
+    const other = remark().use(remarkGfm).parse('Another ~~sentence~~.')
+      .children[0]
     const l = types.length + 5 // (p, text, delete, text, text)
     let n = 0
 
@@ -657,11 +652,12 @@ test('unist-util-visit-parents', (t) => {
     try {
       visitParents(tree, 'text', fail)
     } catch (error) {
-      exception = error
+      const _error = /** @type {Error} */ (error)
+      exception = _error
     }
 
     t.equal(
-      strip((exception || {stack: ''}).stack || '')
+      stripAnsi((exception || {stack: ''}).stack || '')
         .replace(source, '($1:1:1)')
         .split('\n')
         .slice(0, 7)
