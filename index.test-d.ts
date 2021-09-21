@@ -93,8 +93,9 @@ expectError(visitParents())
 expectError(visitParents(sampleTree))
 
 /* Visit without test. */
-visitParents(sampleTree, (node) => {
+visitParents(sampleTree, (node, parents) => {
   expectType<Root | Content>(node)
+  expectType<Array<Root | Blockquote | Heading | Paragraph | Emphasis>>(parents)
 })
 visitParents(implicitTree, (node) => {
   expectAssignable<Node>(node)
@@ -102,8 +103,10 @@ visitParents(implicitTree, (node) => {
 })
 
 /* Visit with type test. */
-visitParents(sampleTree, 'heading', (node) => {
+visitParents(sampleTree, 'heading', (node, parents) => {
   expectType<Heading>(node)
+  // Note that most of these can’t be a parent of `Heading`, but still.
+  expectType<Array<Root | Blockquote | Heading | Paragraph | Emphasis>>(parents)
 })
 visitParents(sampleTree, 'element', (node) => {
   // Not in tree.
