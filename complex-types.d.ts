@@ -103,7 +103,7 @@ export type Visitor<
 
 export type BuildVisitor<
   Tree extends Node = Node,
-  Check extends Test = undefined
+  Check extends Test = string
 > = Visitor<
   Matches<InclusiveDescendant<Tree>, Check>,
   Extract<InclusiveDescendant<Tree>, Parent>
