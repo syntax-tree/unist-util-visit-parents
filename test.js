@@ -10,11 +10,12 @@ import path from 'node:path'
 import assert from 'node:assert'
 import test from 'tape'
 import stripAnsi from 'strip-ansi'
-import {remark} from 'remark'
-import remarkGfm from 'remark-gfm'
+import {fromMarkdown} from 'mdast-util-from-markdown'
+import {gfm} from 'micromark-extension-gfm'
+import {gfmFromMarkdown} from 'mdast-util-gfm'
 import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
 
-const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
+const tree = fromMarkdown('Some _emphasis_, **importance**, and `code`.')
 const paragraph = tree.children[0]
 assert(paragraph.type === 'paragraph')
 const emphasis = paragraph.children[1]
@@ -579,9 +580,11 @@ test('unist-util-visit-parents', (t) => {
   )
 
   t.test('should visit added nodes', (t) => {
-    const tree = remark().parse('Some _emphasis_, **importance**, and `code`.')
-    const other = remark().use(remarkGfm).parse('Another ~~sentence~~.')
-      .children[0]
+    const tree = fromMarkdown('Some _emphasis_, **importance**, and `code`.')
+    const other = fromMarkdown('Another ~~sentence~~.', {
+      extensions: [gfm()],
+      mdastExtensions: [gfmFromMarkdown()]
+    }).children[0]
     const l = types.length + 5 // (p, text, delete, text, text)
     let n = 0
 
@@ -606,7 +609,7 @@ test('unist-util-visit-parents', (t) => {
 
   t.test('should recurse into a bazillion nodes', (t) => {
     const expected = 6000
-    const tree = remark().parse(
+    const tree = fromMarkdown(
       Array.from({length: expected / 4}).join('* 1. ') + 'asd'
     )
     let n = 1
