@@ -26,12 +26,16 @@ export const SKIP = 'skip'
 export const EXIT = false
 
 /**
- * Visit children of tree which pass a test
+ * Visit children of tree which pass test.
  *
- * @param tree Abstract syntax tree to walk
- * @param test Test node, optional
- * @param visitor Function to run for each node
- * @param reverse Visit the tree in reverse order, defaults to false
+ * @param tree
+ *   Tree to walk
+ * @param [test]
+ *   Optional test
+ * @param visitor
+ *   Function to run for each node
+ * @param [reverse=false]
+ *   Walk `children` in reverse order
  */
 export const visitParents =
   /**
@@ -45,7 +49,7 @@ export const visitParents =
      * @param {Node} tree
      * @param {Test} test
      * @param {import('./complex-types').Visitor<Node>} visitor
-     * @param {boolean} [reverse]
+     * @param {boolean} [reverse=false]
      */
     function (tree, test, visitor, reverse) {
       if (typeof test === 'function' && typeof visitor !== 'function') {
@@ -63,10 +67,10 @@ export const visitParents =
       /**
        * @param {Node} node
        * @param {number?} index
-       * @param {Array.<Parent>} parents
+       * @param {Array<Parent>} parents
        */
       function factory(node, index, parents) {
-        /** @type {Object.<string, unknown>} */
+        /** @type {Record<string, unknown>} */
         // @ts-expect-error: hush
         const value = typeof node === 'object' && node !== null ? node : {}
         /** @type {string|undefined} */
@@ -97,7 +101,7 @@ export const visitParents =
           let subresult
           /** @type {number} */
           let offset
-          /** @type {Array.<Parent>} */
+          /** @type {Array<Parent>} */
           let grandparents
 
           if (!test || is(node, index, parents[parents.length - 1] || null)) {

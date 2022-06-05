@@ -86,7 +86,10 @@
     "trailingComma": "none"
   },
   "xo": {
-    "prettier": true
+    "prettier": true,
+    "rules": {
+      "@typescript-eslint/array-type": "off"
+    }
   },
   "remarkConfig": {
     "plugins": [

@@ -81,12 +81,12 @@ type MatchesOne<Value, Check> =
 
 export type Matches<Value, Check> =
   // Is this a list?
-  Check extends any[]
+  Check extends Array<any>
     ? MatchesOne<Value, Check[keyof Check]>
     : MatchesOne<Value, Check>
 
 /**
- * Invoked when a node (matching test, if given) is found.
+ * Called when a node (matching test, if given) is found.
  * Visitors are free to transform node.
  * They can also transform the parent of node (the last of ancestors).
  * Replacing node itself, if `SKIP` is not returned, still causes its descendants to be visited.
@@ -99,7 +99,7 @@ export type Matches<Value, Check> =
 export type Visitor<
   Visited extends Node = Node,
   Ancestor extends Parent = Parent
-> = (node: Visited, ancestors: Ancestor[]) => VisitorResult
+> = (node: Visited, ancestors: Array<Ancestor>) => VisitorResult
 
 export type BuildVisitor<
   Tree extends Node = Node,

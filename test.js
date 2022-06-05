@@ -57,7 +57,7 @@ const reverseTypes = [
   'text'
 ]
 
-/** @type {Array.<Array.<Parent>>} */
+/** @type {Array<Array<Parent>>} */
 const ancestors = [
   [],
   [tree],
@@ -72,7 +72,7 @@ const ancestors = [
   [tree, paragraph]
 ]
 
-/** @type {Array.<Array.<Parent>>} */
+/** @type {Array<Array<Parent>>} */
 const textAncestors = [
   [tree, paragraph],
   [tree, paragraph, emphasis],
@@ -112,7 +112,7 @@ test('unist-util-visit-parents', (t) => {
 
     /**
      * @param {Node} node
-     * @param {Array.<Parent>} parents
+     * @param {Array<Parent>} parents
      */
     function visitor(node, parents) {
       assert.strictEqual(node.type, types[n], 'should be the expected type')
@@ -158,7 +158,7 @@ test('unist-util-visit-parents', (t) => {
 
     /**
      * @param {Node} node
-     * @param {Array.<Parent>} parents
+     * @param {Array<Parent>} parents
      */
     function visitor(node, parents) {
       assert.strictEqual(node.type, 'text')
@@ -188,7 +188,7 @@ test('unist-util-visit-parents', (t) => {
 
   t.test('should accept any `is`-compatible test function', (t) => {
     let n = 0
-    /** @type {Array.<Node>} */
+    /** @type {Array<Node>} */
     const nodes = [
       paragraph.children[4],
       paragraph.children[5],
@@ -207,7 +207,7 @@ test('unist-util-visit-parents', (t) => {
 
     /**
      * @param {Node} node
-     * @param {Array.<Parent>} parents
+     * @param {Array<Parent>} parents
      */
     function visitor(node, parents) {
       const parent = parents[parents.length - 1]
@@ -470,7 +470,7 @@ test('unist-util-visit-parents', (t) => {
 
       /**
        * @param {Node} node
-       * @param {Array.<Parent>} parents
+       * @param {Array<Parent>} parents
        */
       function visitor(node, parents) {
         const parent = parents[parents.length - 1]
@@ -513,7 +513,7 @@ test('unist-util-visit-parents', (t) => {
 
     /**
      * @param {Node} node
-     * @param {Array.<Parent>} parents
+     * @param {Array<Parent>} parents
      */
     function visitor(node, parents) {
       const parent = parents[parents.length - 1]
@@ -558,7 +558,7 @@ test('unist-util-visit-parents', (t) => {
 
       /**
        * @param {Node} node
-       * @param {Array.<Parent>} parents
+       * @param {Array<Parent>} parents
        * @returns {[null, number]|void}
        */
       function visitor(node, parents) {
@@ -596,7 +596,7 @@ test('unist-util-visit-parents', (t) => {
 
     /**
      * @param {Node} _
-     * @param {Array.<Parent>} parents
+     * @param {Array<Parent>} parents
      */
     function visitor(_, parents) {
       n++
