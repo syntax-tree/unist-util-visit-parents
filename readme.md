@@ -8,17 +8,55 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[**unist**][unist] utility to visit nodes, with ancestral information.
+[unist][] utility to walk the tree with a stack of parents.
+
+## Contents
+
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
+*   [Install](#install)
+*   [Use](#use)
+*   [API](#api)
+    *   [`visitParents(tree[, test], visitor[, reverse])`](#visitparentstree-test-visitor-reverse)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
+*   [Related](#related)
+*   [Contribute](#contribute)
+*   [License](#license)
+
+## What is this?
+
+This is a very important utility for working with unist as it lets you walk the
+tree.
+
+## When should I use this?
+
+You can use this utility when you want to walk the tree and want to know about
+every parent of each node.
+You can use [`unist-util-visit`][unist-util-visit] if you don’t care about the
+entire stack of parents.
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
-Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
-
-[npm][]:
+This package is [ESM only][esm].
+In Node.js (version 12.20+, 14.14+, 16.0+, 18.0+), install with [npm][]:
 
 ```sh
 npm install unist-util-visit-parents
+```
+
+In Deno with [`esm.sh`][esmsh]:
+
+```js
+import {visitParents} from "https://esm.sh/unist-util-visit-parents@5"
+```
+
+In browsers with [`esm.sh`][esmsh]:
+
+```html
+<script type="module">
+  import {visitParents} from "https://esm.sh/unist-util-visit-parents@5?bundle"
+</script>
 ```
 
 ## Use
@@ -27,145 +65,144 @@ npm install unist-util-visit-parents
 import {visitParents} from 'unist-util-visit-parents'
 import {fromMarkdown} from 'mdast-util-from-markdown'
 
-const tree = fromMarkdown('Some _emphasis_, **importance**, and `code`.')
+const tree = fromMarkdown('Some *emphasis*, **strong**, and `code`.')
 
 visitParents(tree, 'strong', (node, ancestors) => {
-  console.log(node.type, ancestors)
+  console.log(node.type, ancestors.map(ancestor => ancestor.type))
 })
 ```
 
 Yields:
 
 ```js
-strong
-[
-  {
-    type: 'root',
-    children: [[Object]],
-    position: {start: [Object], end: [Object]}
-  },
-  {
-    type: 'paragraph',
-    children: [
-      [Object],
-      [Object],
-      [Object],
-      [Object],
-      [Object],
-      [Object],
-      [Object]
-    ],
-    position: {start: [Object], end: [Object]}
-  }
-]
+strong ['root', 'paragraph']
 ```
 
 ## API
 
-This package exports the following identifiers: `visitParents`, `SKIP`,
-`CONTINUE`, and `EXIT`.
+This package exports the identifiers `visitParents`, `SKIP`, `CONTINUE`, and
+`EXIT`.
 There is no default export.
 
 ### `visitParents(tree[, test], visitor[, reverse])`
 
-Visit nodes ([*inclusive descendants*][descendant] of [`tree`][tree]), with
-ancestral information.
-Optionally filtering nodes.
-Optionally in reverse.
+Walk the `tree` ([`Node`][node]) and visit [*inclusive descendants*][descendant]
+with ancestral information.
 
-This algorithm performs [*depth-first*][depth-first]
-[*tree traversal*][tree-traversal] in [*preorder*][preorder] (**NLR**), or
-if `reverse` is given, in *reverse preorder* (**NRL**).
+This algorithm performs *[depth-first][]* *[tree traversal][tree-traversal]* in
+*[preorder][]* (**NLR**), or if `reverse` is given, in *reverse preorder*
+(**NRL**).
+
+You can choose for which nodes `visitor` is called by passing a `test`.
 
 Walking the tree is an intensive task.
 Make use of the return values of the visitor when possible.
 Instead of walking a tree multiple times with different `test`s, walk it once
-without a test, and use [`unist-util-is`][is] to check if a node matches a test,
-and then perform different operations.
+without a test, and use [`unist-util-is`][unist-util-is] to check if a node
+matches a test, and then perform different operations.
+
+You can change the tree.
+See `visitor` below for more info.
 
 ###### Parameters
 
-*   `tree` ([`Node`][node]) — [Tree][] to traverse
-*   `test` ([`Test`][is], optional) — [`is`][is]-compatible test (such as a
-    [type][])
-*   `visitor` ([Function][visitor]) — Function invoked when a node is found
-    that passes `test`
-*   `reverse` (`boolean`, default: `false`) — The tree is traversed in
-    [preorder][] (NLR), visiting the node itself, then its [head][], etc.
-    When `reverse` is passed, the tree is traversed in reverse preorder (NRL):
-    the node itself is visited, then its [tail][], etc.
+*   `tree` ([`Node`][node])
+    — tree to traverse
+*   `test` ([`Test`][test], optional)
+    — [`unist-util-is`][unist-util-is]-compatible test
+*   `visitor` ([Function][visitor])
+    — function called for nodes that pass `test`
+*   `reverse` (`boolean`, default: `false`)
+    — traverse in reverse preorder (NRL) instead of preorder (NLR) (default
 
 #### `next? = visitor(node, ancestors)`
 
-Invoked when a node (matching `test`, if given) is found.
+Called when a node (matching `test`, if given) is entered.
 
-Visitors are free to transform `node`.
+Visitors are free to change `node`.
 They can also transform the [parent][] of node (the last of `ancestors`).
-Replacing `node` itself, if `SKIP` is not returned, still causes its
-[descendant][]s to be visited.
-If adding or removing previous [sibling][]s (or next siblings, in case of
-`reverse`) of `node`, `visitor` should return a new [`index`][index] (`number`)
-to specify the sibling to traverse after `node` is traversed.
+Replacing `node` itself is okay if `SKIP` is returned.
+When adding or removing previous [sibling][]s (or next siblings, in case of
+`reverse`) of `node`, `visitor` must return a new [`index`][index] (`number`)
+to specify the sibling to move to after `node` is traversed.
 Adding or removing next siblings of `node` (or previous siblings, in case of
-reverse) is handled as expected without needing to return a new `index`.
-Removing the `children` property of an ancestor still results in them being
-traversed.
+`reverse`) is fine without needing to return a new `index`.
+Replacing the `children` of a node is fine, but replacing them on an ancestor
+is not okay and still causes them to be visited.
 
 ###### Parameters
 
-*   `node` ([`Node`][node]) — Found node
-*   `ancestors` (`Array.<Node>`) — [Ancestor][]s of `node`
+*   `node` ([`Node`][node]) — found node
+*   `ancestors` (`Array<Node>`) — [ancestor][]s of `node`
 
 ##### Returns
 
 The return value can have the following forms:
 
-*   [`index`][index] (`number`) — Treated as a tuple of `[CONTINUE, index]`
-*   `action` (`*`) — Treated as a tuple of `[action]`
-*   `tuple` (`Array.<*>`) — List with one or two values, the first an `action`,
-    the second and `index`.
-    Note that passing a tuple only makes sense if the `action` is `SKIP`.
-    If the `action` is `EXIT`, that action can be returned.
-    If the `action` is `CONTINUE`, `index` can be returned.
+*   [`index`][index] (`number`) — like a tuple of `[CONTINUE, index]`
+*   `action` (`*`) — like a tuple of `[action]`
+*   `tuple` (`[action, index?]`) — array with one or two values, the first an
+    `action`, the second and `index`.
+
+> 👉 **Note**: yielding a tuple only makes sense if the `action` is `SKIP`.
+> Otherwise, if the `action` is `EXIT`, that action can be returned.
+> Or if the `action` is `CONTINUE`, `index` can be returned.
 
 ###### `action`
 
 An action can have the following values:
 
-*   `EXIT` (`false`) — Stop traversing immediately
-*   `CONTINUE` (`true`) — Continue traversing as normal (same behaviour
-    as not returning anything)
-*   `SKIP` (`'skip'`) — Do not traverse this node’s children; continue
-    with the specified index
+*   `EXIT` (`false`) — stop traversing immediately
+*   `CONTINUE` (`true`) — continue traversing as normal
+*   `SKIP` (`'skip'`) — do not traverse this node’s children
 
 ###### `index`
 
-[`index`][index] (`number`) — Move to the sibling at `index` next (after `node`
-itself is completely traversed).
+Next [`index`][index] (`number`).
+Defines that the sibling at `index` should be moved to (after `node` itself is
+completely traversed).
 Useful if mutating the tree, such as removing the node the visitor is currently
-on, or any of its previous siblings (or next siblings, in case of `reverse`)
+on, or any of its previous siblings (or next siblings, in case of `reverse`).
 Results less than `0` or greater than or equal to `children.length` stop
 traversing the parent
+
+## Types
+
+This package is fully typed with [TypeScript][].
+It exports the additional types `Test`, `Action`, `Index`, `ActionTuple`,
+`VisitorResult`, and `Visitor`.
+
+It also exports the types `BuildVisitor<Tree extends Node = Node, Check extends
+Test = string>` to properly type visitors from a tree and a test, and
+`Visitor<Visited extends Node = Node, Ancestor extends Parent = Parent>` to
+build an arbitrary visitor, from `unist-util-visit-parents/complex-types.d.ts`.
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with all maintained
+versions of Node.js.
+As of now, that is Node.js 12.20+, 14.14+, 16.0+, and 18.0+.
+Our projects sometimes work with older versions, but this is not guaranteed.
 
 ## Related
 
 *   [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
-    — Like `visit-parents`, but with one parent
+    — walk the tree with one parent
 *   [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
-    — Create a new tree with all nodes that pass a test
+    — create a new tree with all nodes that pass a test
 *   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
-    — Create a new tree with all nodes mapped by a given function
+    — create a new tree with all nodes mapped by a given function
 *   [`unist-util-flatmap`](https://gitlab.com/staltz/unist-util-flatmap)
-    — Create a new tree by mapping (to an array) with the given function
+    — create a new tree by mapping (to an array) with the given function
 *   [`unist-util-remove`](https://github.com/syntax-tree/unist-util-remove)
-    — Remove nodes from a tree that pass a test
+    — remove nodes from a tree that pass a test
 *   [`unist-util-select`](https://github.com/syntax-tree/unist-util-select)
-    — Select nodes with CSS-like selectors
+    — select nodes with CSS-like selectors
 
 ## Contribute
 
-See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
-started.
+See [`contributing.md`][contributing] in [`syntax-tree/.github`][health] for
+ways to get started.
 See [`support.md`][support] for ways to get help.
 
 This project has a [code of conduct][coc].
@@ -206,15 +243,17 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[esmsh]: https://esm.sh
+
+[typescript]: https://www.typescriptlang.org
+
 [license]: license
 
 [author]: https://wooorm.com
 
-[unist]: https://github.com/syntax-tree/unist
-
-[node]: https://github.com/syntax-tree/unist#node
-
-[visitor]: #next--visitornode-ancestors
+[health]: https://github.com/syntax-tree/.github
 
 [contributing]: https://github.com/syntax-tree/.github/blob/HEAD/contributing.md
 
@@ -222,7 +261,9 @@ abide by its terms.
 
 [coc]: https://github.com/syntax-tree/.github/blob/HEAD/code-of-conduct.md
 
-[is]: https://github.com/syntax-tree/unist-util-is
+[unist]: https://github.com/syntax-tree/unist
+
+[node]: https://github.com/syntax-tree/unist#node
 
 [depth-first]: https://github.com/syntax-tree/unist#depth-first-traversal
 
@@ -232,10 +273,6 @@ abide by its terms.
 
 [descendant]: https://github.com/syntax-tree/unist#descendant
 
-[head]: https://github.com/syntax-tree/unist#head
-
-[tail]: https://github.com/syntax-tree/unist#tail
-
 [parent]: https://github.com/syntax-tree/unist#parent-1
 
 [sibling]: https://github.com/syntax-tree/unist#sibling
@@ -244,6 +281,10 @@ abide by its terms.
 
 [ancestor]: https://github.com/syntax-tree/unist#ancestor
 
-[tree]: https://github.com/syntax-tree/unist#tree
+[unist-util-visit]: https://github.com/syntax-tree/unist-util-visit
 
-[type]: https://github.com/syntax-tree/unist#type
+[unist-util-is]: https://github.com/syntax-tree/unist-util-is
+
+[test]: https://github.com/syntax-tree/unist-util-is#test
+
+[visitor]: #next--visitornode-ancestors

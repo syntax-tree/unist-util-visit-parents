@@ -31,11 +31,11 @@ export const EXIT = false
  * @param tree
  *   Tree to walk
  * @param [test]
- *   Optional test
+ *   `unist-util-is`-compatible test
  * @param visitor
- *   Function to run for each node
+ *   Function called for nodes that pass `test`.
  * @param [reverse=false]
- *   Walk `children` in reverse order
+ *   Traverse in reverse preorder (NRL) instead of preorder (NLR) (default).
  */
 export const visitParents =
   /**
