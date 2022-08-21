@@ -2,11 +2,11 @@
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Parent} Parent
  * @typedef {import('unist-util-is').Test} Test
- * @typedef {import('./complex-types').Action} Action
- * @typedef {import('./complex-types').Index} Index
- * @typedef {import('./complex-types').ActionTuple} ActionTuple
- * @typedef {import('./complex-types').VisitorResult} VisitorResult
- * @typedef {import('./complex-types').Visitor} Visitor
+ * @typedef {import('./complex-types.js').Action} Action
+ * @typedef {import('./complex-types.js').Index} Index
+ * @typedef {import('./complex-types.js').ActionTuple} ActionTuple
+ * @typedef {import('./complex-types.js').VisitorResult} VisitorResult
+ * @typedef {import('./complex-types.js').Visitor} Visitor
  */
 
 import {convert} from 'unist-util-is'
@@ -40,15 +40,15 @@ export const EXIT = false
 export const visitParents =
   /**
    * @type {(
-   *   (<Tree extends Node, Check extends Test>(tree: Tree, test: Check, visitor: import('./complex-types').BuildVisitor<Tree, Check>, reverse?: boolean) => void) &
-   *   (<Tree extends Node>(tree: Tree, visitor: import('./complex-types').BuildVisitor<Tree>, reverse?: boolean) => void)
+   *   (<Tree extends Node, Check extends Test>(tree: Tree, test: Check, visitor: import('./complex-types.js').BuildVisitor<Tree, Check>, reverse?: boolean) => void) &
+   *   (<Tree extends Node>(tree: Tree, visitor: import('./complex-types.js').BuildVisitor<Tree>, reverse?: boolean) => void)
    * )}
    */
   (
     /**
      * @param {Node} tree
      * @param {Test} test
-     * @param {import('./complex-types').Visitor<Node>} visitor
+     * @param {import('./complex-types.js').Visitor<Node>} visitor
      * @param {boolean} [reverse=false]
      */
     function (tree, test, visitor, reverse) {
