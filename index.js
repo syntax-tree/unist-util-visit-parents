@@ -7,12 +7,6 @@
  * @typedef {import('./complex-types.js').ActionTuple} ActionTuple
  * @typedef {import('./complex-types.js').VisitorResult} VisitorResult
  * @typedef {import('./complex-types.js').Visitor} Visitor
- * @typedef {import('./complex-types.js').InclusiveDescendant} InclusiveDescendant
- */
-
-/**
- * @template Value, Check
- * @typedef {import('./complex-types.js').Matches<Value, Check>} Matches
  */
 
 import {convert} from 'unist-util-is'
