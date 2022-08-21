@@ -1,6 +1,6 @@
 {
   "name": "unist-util-visit-parents",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "unist utility to recursively walk over nodes, with ancestral information",
   "license": "MIT",
   "keywords": [
