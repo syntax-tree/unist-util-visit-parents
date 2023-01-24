@@ -31,17 +31,14 @@
   "type": "module",
   "main": "index.js",
   "browser": {
-    "./color.js": "./color.browser.js"
+    "./lib/color.js": "./lib/color.browser.js"
   },
   "react-native": {
-    "./color.js": "./color.browser.js"
+    "./lib/color.js": "./lib/color.browser.js"
   },
   "types": "index.d.ts",
   "files": [
-    "color.d.ts",
-    "color.js",
-    "color.browser.d.ts",
-    "color.browser.js",
+    "lib/",
     "complex-types.d.ts",
     "index.d.ts",
     "index.js"
@@ -102,7 +99,7 @@
     "ignoreCatch": true,
     "#": "needed `any`s",
     "ignoreFiles": [
-      "complex-types.d.ts"
+      "lib/complex-types.d.ts"
     ]
   }
 }
