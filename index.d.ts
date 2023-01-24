@@ -6,5 +6,5 @@ export type {
   VisitorResult,
   Visitor,
   BuildVisitor
-} from './lib/complex-types.js'
+} from './lib/index.js'
 export {CONTINUE, EXIT, SKIP, visitParents} from './lib/index.js'
