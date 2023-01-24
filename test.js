@@ -14,6 +14,7 @@ import {fromMarkdown} from 'mdast-util-from-markdown'
 import {gfm} from 'micromark-extension-gfm'
 import {gfmFromMarkdown} from 'mdast-util-gfm'
 import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
+import * as mod from './index.js'
 
 const tree = fromMarkdown('Some _emphasis_, **importance**, and `code`.')
 const paragraph = tree.children[0]
@@ -82,7 +83,13 @@ const textAncestors = [
   [tree, paragraph]
 ]
 
-test('unist-util-visit-parents', async (t) => {
+test('visitParents', async (t) => {
+  assert.deepEqual(
+    Object.keys(mod).sort(),
+    ['CONTINUE', 'EXIT', 'SKIP', 'visitParents'],
+    'should expose the public api'
+  )
+
   assert.throws(
     () => {
       // @ts-expect-error runtime
