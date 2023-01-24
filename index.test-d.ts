@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
 import {expectAssignable, expectError, expectType, expectNotType} from 'tsd'
-import {Node, Literal, Parent} from 'unist'
+import type {Node, Literal, Parent} from 'unist'
 import {is} from 'unist-util-is'
 import {visitParents, SKIP, EXIT, CONTINUE} from './index.js'
 
@@ -36,6 +36,7 @@ const complexTree: Root = {
   ]
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Element extends Parent {
   type: 'element'
   tagName: string
@@ -46,6 +47,7 @@ interface Element extends Parent {
 
 type Content = Flow | Phrasing
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Root extends Parent {
   type: 'root'
   children: Array<Flow>
@@ -53,17 +55,20 @@ interface Root extends Parent {
 
 type Flow = Blockquote | Heading | Paragraph
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Blockquote extends Parent {
   type: 'blockquote'
   children: Array<Flow>
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Heading extends Parent {
   type: 'heading'
   depth: number
   children: Array<Phrasing>
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Paragraph extends Parent {
   type: 'paragraph'
   children: Array<Phrasing>
@@ -71,11 +76,13 @@ interface Paragraph extends Parent {
 
 type Phrasing = Text | Emphasis
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Emphasis extends Parent {
   type: 'emphasis'
   children: Array<Phrasing>
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Text extends Literal {
   type: 'text'
   value: string
