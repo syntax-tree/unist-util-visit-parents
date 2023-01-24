@@ -23,7 +23,7 @@
     *   [`SKIP`](#skip)
     *   [`Action`](#action)
     *   [`ActionTuple`](#actiontuple)
-    *   [BuildVisitor](#buildvisitor)
+    *   [`BuildVisitor`](#buildvisitor)
     *   [`Index`](#index)
     *   [`Test`](#test)
     *   [`Visitor`](#visitor)
@@ -166,9 +166,9 @@ type ActionTuple = [
 ]
 ```
 
-### BuildVisitor
+### `BuildVisitor`
 
-Build a typed `visitor` function from a tree and a test (TypeScript type).
+Build a typed `Visitor` function from a tree and a test (TypeScript type).
 
 It will infer which values are passed as `node` and which as `parents`.
 
