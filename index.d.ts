@@ -2,9 +2,9 @@ export type {Test} from 'unist-util-is'
 export type {
   Action,
   ActionTuple,
+  BuildVisitor,
   Index,
-  VisitorResult,
   Visitor,
-  BuildVisitor
+  VisitorResult
 } from './lib/index.js'
 export {CONTINUE, EXIT, SKIP, visitParents} from './lib/index.js'
