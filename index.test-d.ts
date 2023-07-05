@@ -72,14 +72,14 @@ visitParents(sampleTree)
 // ## No test
 visitParents(sampleTree, function (node, parents) {
   expectType<Nodes>(node)
-  expectType<Array<Parents>>(parents)
+  expectType<Parents[]>(parents)
 })
 
 visitParents(implicitTree, function (node, parents) {
   // Objects are too loose.
   expectAssignable<Node>(node)
   expectNotType<Node>(node)
-  expectAssignable<Array<Node>>(parents)
+  expectAssignable<Node[]>(parents)
 })
 
 // ## String test
@@ -95,13 +95,13 @@ visitParents(sampleTree, 'heading', function (node, parents) {
 // Not in tree.
 visitParents(sampleTree, 'element', function (node, parents) {
   expectType<never>(node)
-  expectType<Array<never>>(parents)
+  expectType<never[]>(parents)
 })
 
 // Implicit nodes are too loose.
 visitParents(implicitTree, 'heading', function (node, parents) {
   expectType<never>(node)
-  expectType<Array<never>>(parents)
+  expectType<never[]>(parents)
 })
 
 // ## Props test
@@ -222,7 +222,7 @@ visitParents(sampleTree, 'tableCell', function (node) {
 visitParents(sampleTree, 'definition', function (node) {
   visitParents(node, function (node, parents) {
     expectType<Definition>(node)
-    expectType<Array<never>>(parents)
+    expectType<never[]>(parents)
   })
 })
 
