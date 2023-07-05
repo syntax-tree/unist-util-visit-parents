@@ -77,7 +77,7 @@ import {fromMarkdown} from 'mdast-util-from-markdown'
 
 const tree = fromMarkdown('Some *emphasis*, **strong**, and `code`.')
 
-visitParents(tree, 'strong', (node, ancestors) => {
+visitParents(tree, 'strong', function (node, ancestors) {
   console.log(node.type, ancestors.map(ancestor => ancestor.type))
 })
 ```
@@ -128,7 +128,7 @@ See [`Visitor`][api-visitor] for more info.
 
 ###### Returns
 
-Nothing (`void`).
+Nothing (`undefined`).
 
 ### `CONTINUE`
 

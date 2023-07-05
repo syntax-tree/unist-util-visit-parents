@@ -1,15 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import type {Node, Parent} from 'unist'
-import type {Test} from 'unist-util-is'
-import type {Visitor} from './index.js'
 
 /**
  * Internal utility to collect all descendants of in `Tree`.
  */
 export type InclusiveDescendant<
   Tree extends Node = never,
-  Found = void
+  Found = undefined
 > = Tree extends Parent
   ?
       | Tree
@@ -37,10 +33,7 @@ type MatchesOne<Value, Check> =
   // Is this a node?
   Value extends Node
     ? // No test.
-      Check extends null
-      ? Value
-      : // No test.
-      Check extends undefined
+      Check extends null | undefined
       ? Value
       : // Function test.
       Check extends Function
@@ -64,4 +57,3 @@ export type Matches<Value, Check> =
   Check extends Array<any>
     ? MatchesOne<Value, Check[keyof Check]>
     : MatchesOne<Value, Check>
-/* eslint-enable @typescript-eslint/ban-types */

@@ -51,6 +51,7 @@
     "@types/hast": "^2.0.0",
     "@types/mdast": "^3.0.0",
     "@types/node": "^20.0.0",
+    "@types/xast": "^1.0.0",
     "c8": "^8.0.0",
     "mdast-util-from-markdown": "^1.0.0",
     "mdast-util-gfm": "^2.0.0",
@@ -100,7 +101,10 @@
       {
         "files": "**/*.ts",
         "rules": {
-          "@typescript-eslint/array-type": "off"
+          "@typescript-eslint/array-type": "off",
+          "@typescript-eslint/ban-types": "off",
+          "@typescript-eslint/consistent-type-definitions": "off",
+          "@typescript-eslint/no-empty-function": "off"
         }
       }
     ],
