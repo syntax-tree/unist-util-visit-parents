@@ -2,17 +2,35 @@ import type {Node, Parent} from 'unist'
 
 /**
  * Internal utility to collect all descendants of in `Tree`.
+ *
+ * Performance: this seems to be the fastest way to recurse without actually
+ * running into an infinite loop.
+ *
+ * Practically, `0 | 1 | 2` is enough for mdast, but it doesn’t improve performance.
+ * Using up to 10 doesn’t hurt or help either.
+ * So `5` seems reasonable.
+ *
  */
 export type InclusiveDescendant<
-  Tree extends Node = never,
-  Found = undefined
+  Tree extends Node,
+  Depth extends 0 | 1 | 2 | 3 | 4 | 5 = 0
 > = Tree extends Parent
-  ?
-      | Tree
-      | InclusiveDescendant<
-          Exclude<Tree['children'][number], Found | Tree>,
-          Found | Tree
-        >
+  ? Depth extends 5
+    ? Tree
+    :
+        | Tree
+        | InclusiveDescendant<
+            Tree['children'][number],
+            Depth extends 0
+              ? 1
+              : Depth extends 1
+              ? 2
+              : Depth extends 2
+              ? 3
+              : Depth extends 3
+              ? 4
+              : 5
+          >
   : Tree
 
 /**
