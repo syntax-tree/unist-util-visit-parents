@@ -2,7 +2,6 @@
  * @typedef {import('hast').Root} HastRoot
  * @typedef {import('mdast').PhrasingContent} PhrasingContent
  * @typedef {import('unist').Parent} Parent
- * @typedef {import('xast').Element} XastElement
  * @typedef {import('xast').Root} XastRoot
  */
 
@@ -12,7 +11,7 @@ import stripAnsi from 'strip-ansi'
 import {fromMarkdown} from 'mdast-util-from-markdown'
 import {gfmFromMarkdown} from 'mdast-util-gfm'
 import {gfm} from 'micromark-extension-gfm'
-import {visitParents, EXIT, SKIP, CONTINUE} from './index.js'
+import {EXIT, SKIP, CONTINUE, visitParents} from 'unist-util-visit-parents'
 
 const tree = fromMarkdown('Some _emphasis_, **importance**, and `code`.')
 const paragraph = tree.children[0]
@@ -85,12 +84,10 @@ const textAncestors = [
 
 test('visitParents', async function (t) {
   await t.test('should expose the public api', async function () {
-    assert.deepEqual(Object.keys(await import('./index.js')).sort(), [
-      'CONTINUE',
-      'EXIT',
-      'SKIP',
-      'visitParents'
-    ])
+    assert.deepEqual(
+      Object.keys(await import('unist-util-visit-parents')).sort(),
+      ['CONTINUE', 'EXIT', 'SKIP', 'visitParents']
+    )
   })
 
   await t.test('should fail without tree', async function () {
