@@ -3,10 +3,10 @@ export type {
   Action,
   ActionTuple,
   BuildVisitor,
-  // Used in `unist-util-visit`:
+  // Undocumented: used in `unist-util-visit`:
   InclusiveDescendant,
   Index,
-  // Used in `unist-util-visit`:
+  // Undocumented: used in `unist-util-visit`:
   Matches,
   Visitor,
   VisitorResult
