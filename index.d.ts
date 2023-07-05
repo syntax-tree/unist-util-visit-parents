@@ -3,7 +3,11 @@ export type {
   Action,
   ActionTuple,
   BuildVisitor,
+  // Used in `unist-util-visit`:
+  InclusiveDescendant,
   Index,
+  // Used in `unist-util-visit`:
+  Matches,
   Visitor,
   VisitorResult
 } from './lib/index.js'

@@ -39,7 +39,6 @@
   "types": "index.d.ts",
   "files": [
     "lib/",
-    "complex-types.d.ts",
     "index.d.ts",
     "index.js"
   ],
@@ -91,7 +90,7 @@
     "detail": true,
     "#": "needed `any`s",
     "ignoreFiles": [
-      "lib/complex-types.d.ts"
+      "lib/index.d.ts"
     ],
     "ignoreCatch": true,
     "strict": true
