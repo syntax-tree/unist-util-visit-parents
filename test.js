@@ -1,7 +1,8 @@
 /**
  * @typedef {import('hast').Root} HastRoot
+ * @typedef {import('mdast').Parents} Parents
  * @typedef {import('mdast').PhrasingContent} PhrasingContent
- * @typedef {import('unist').Parent} Parent
+ * @typedef {import('mdast').Root} Root
  * @typedef {import('xast').Root} XastRoot
  */
 
@@ -13,7 +14,10 @@ import {gfmFromMarkdown} from 'mdast-util-gfm'
 import {gfm} from 'micromark-extension-gfm'
 import {EXIT, SKIP, CONTINUE, visitParents} from 'unist-util-visit-parents'
 
-const tree = fromMarkdown('Some _emphasis_, **importance**, and `code`.')
+// To do: remove cast when `mdast-util-from-markdown` is updated.
+const tree = /** @type {Root} */ (
+  fromMarkdown('Some _emphasis_, **importance**, and `code`.')
+)
 const paragraph = tree.children[0]
 assert(paragraph.type === 'paragraph')
 const emphasis = paragraph.children[1]
@@ -55,8 +59,7 @@ const reverseTypes = [
   'text'
 ]
 
-// To do: use `Parents` from `mdast` when released.
-/** @type {Array<Array<Parent>>} */
+/** @type {Array<Array<Parents>>} */
 const ancestors = [
   [],
   [tree],
@@ -71,8 +74,7 @@ const ancestors = [
   [tree, paragraph]
 ]
 
-// To do: use `Parents` from `mdast` when released.
-/** @type {Array<Array<Parent>>} */
+/** @type {Array<Array<Parents>>} */
 const textAncestors = [
   [tree, paragraph],
   [tree, paragraph, emphasis],
@@ -578,6 +580,7 @@ test('visitParents', async function (t) {
         {
           type: 'element',
           name: 'xml',
+          attributes: {},
           children: [{type: 'text', value: 'Oh no!'}]
         }
       ]

@@ -43,14 +43,14 @@
     "index.js"
   ],
   "dependencies": {
-    "@types/unist": "^2.0.0",
-    "unist-util-is": "^5.0.0"
+    "@types/unist": "^3.0.0",
+    "unist-util-is": "^6.0.0"
   },
   "devDependencies": {
-    "@types/hast": "^2.0.0",
-    "@types/mdast": "^3.0.0",
+    "@types/hast": "^3.0.0",
+    "@types/mdast": "^4.0.0",
     "@types/node": "^20.0.0",
-    "@types/xast": "^1.0.0",
+    "@types/xast": "^2.0.0",
     "c8": "^8.0.0",
     "mdast-util-from-markdown": "^1.0.0",
     "mdast-util-gfm": "^2.0.0",

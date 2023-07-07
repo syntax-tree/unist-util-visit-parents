@@ -1,49 +1,26 @@
 import {expectAssignable, expectNotType, expectType} from 'tsd'
 import type {
   Blockquote,
-  Content,
   Definition,
   Delete,
   Emphasis,
-  Footnote,
   FootnoteDefinition,
   Heading,
   Link,
   LinkReference,
   List,
   ListItem,
+  Nodes,
   Paragraph,
+  Parents,
   PhrasingContent,
   Root,
+  RootContent,
   Strong,
-  Table,
-  TableCell,
-  TableRow
+  TableCell
 } from 'mdast'
 import type {Node, Parent} from 'unist'
 import {CONTINUE, EXIT, SKIP, visitParents} from './index.js'
-
-// To do: use `mdast` when released.
-type Nodes = Root | Content
-
-// To do: use `mdast` when released.
-type Parents =
-  | Blockquote
-  | Delete
-  | Emphasis
-  | Footnote
-  | FootnoteDefinition
-  | Heading
-  | Link
-  | LinkReference
-  | List
-  | ListItem
-  | Paragraph
-  | Root
-  | Strong
-  | Table
-  | TableCell
-  | TableRow
 
 /* Setup */
 const implicitTree = {
@@ -147,7 +124,7 @@ visitParents(sampleTree, isHeading2, function (node) {
 // ## Combined tests
 visitParents(sampleTree, ['heading', {depth: 1}, isHeading], function (node) {
   // Unfortunately TS casts things in arrays too vague.
-  expectType<Root | Content>(node)
+  expectType<Root | RootContent>(node)
 })
 
 // To do: update to `unist-util-is` should make this work?
@@ -156,7 +133,7 @@ visitParents(sampleTree, ['heading', {depth: 1}, isHeading], function (node) {
 //   ['heading', {depth: 1}, isHeading] as const,
 //   function (node) {
 //     // Unfortunately TS casts things in arrays too vague.
-//     expectType<Root | Content>(node)
+//     expectType<Root | RootContent>(node)
 //   }
 // )
 
@@ -212,9 +189,7 @@ visitParents(sampleTree, 'tableCell', function (node) {
   visitParents(node, function (node, parents) {
     expectType<TableCell | PhrasingContent>(node)
     expectType<
-      Array<
-        Delete | Emphasis | Footnote | Link | LinkReference | Strong | TableCell
-      >
+      Array<Delete | Emphasis | Link | LinkReference | Strong | TableCell>
     >(parents)
   })
 })
