@@ -58,14 +58,14 @@ npm install unist-util-visit-parents
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import {visitParents} from 'https://esm.sh/unist-util-visit-parents@5'
+import {visitParents} from 'https://esm.sh/unist-util-visit-parents@6'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import {visitParents} from 'https://esm.sh/unist-util-visit-parents@5?bundle'
+  import {visitParents} from 'https://esm.sh/unist-util-visit-parents@6?bundle'
 </script>
 ```
 
