@@ -12,27 +12,27 @@
 
 ## Contents
 
-*   [What is this?](#what-is-this)
-*   [When should I use this?](#when-should-i-use-this)
-*   [Install](#install)
-*   [Use](#use)
-*   [API](#api)
-    *   [`visitParents(tree[, test], visitor[, reverse])`](#visitparentstree-test-visitor-reverse)
-    *   [`CONTINUE`](#continue)
-    *   [`EXIT`](#exit)
-    *   [`SKIP`](#skip)
-    *   [`Action`](#action)
-    *   [`ActionTuple`](#actiontuple)
-    *   [`BuildVisitor`](#buildvisitor)
-    *   [`Index`](#index)
-    *   [`Test`](#test)
-    *   [`Visitor`](#visitor)
-    *   [`VisitorResult`](#visitorresult)
-*   [Types](#types)
-*   [Compatibility](#compatibility)
-*   [Related](#related)
-*   [Contribute](#contribute)
-*   [License](#license)
+* [What is this?](#what-is-this)
+* [When should I use this?](#when-should-i-use-this)
+* [Install](#install)
+* [Use](#use)
+* [API](#api)
+  * [`visitParents(tree[, test], visitor[, reverse])`](#visitparentstree-test-visitor-reverse)
+  * [`CONTINUE`](#continue)
+  * [`EXIT`](#exit)
+  * [`SKIP`](#skip)
+  * [`Action`](#action)
+  * [`ActionTuple`](#actiontuple)
+  * [`BuildVisitor`](#buildvisitor)
+  * [`Index`](#index)
+  * [`Test`](#test)
+  * [`Visitor`](#visitor)
+  * [`VisitorResult`](#visitorresult)
+* [Types](#types)
+* [Compatibility](#compatibility)
+* [Related](#related)
+* [Contribute](#contribute)
+* [License](#license)
 
 ## What is this?
 
@@ -117,14 +117,14 @@ See [`Visitor`][api-visitor] for more info.
 
 ###### Parameters
 
-*   `tree` ([`Node`][node])
-    — tree to traverse
-*   `test` ([`Test`][api-test], optional)
-    — [`unist-util-is`][unist-util-is]-compatible test
-*   `visitor` ([`Visitor`][api-visitor])
-    — handle each node
-*   `reverse` (`boolean`, default: `false`)
-    — traverse in reverse preorder (NRL) instead of the default preorder (NLR)
+* `tree` ([`Node`][node])
+  — tree to traverse
+* `test` ([`Test`][api-test], optional)
+  — [`unist-util-is`][unist-util-is]-compatible test
+* `visitor` ([`Visitor`][api-visitor])
+  — handle each node
+* `reverse` (`boolean`, default: `false`)
+  — traverse in reverse preorder (NRL) instead of the default preorder (NLR)
 
 ###### Returns
 
@@ -174,10 +174,10 @@ It will infer which values are passed as `node` and which as `parents`.
 
 ###### Type parameters
 
-*   `Tree` ([`Node`][node], default: `Node`)
-    — tree type
-*   `Check` ([`Test`][api-test], default: `Test`)
-    — test type
+* `Tree` ([`Node`][node], default: `Node`)
+  — tree type
+* `Check` ([`Test`][api-test], default: `Test`)
+  — test type
 
 ###### Returns
 
@@ -224,10 +224,10 @@ traversed.
 
 ###### Parameters
 
-*   `node` ([`Node`][node])
-    — found node
-*   `parents` ([`Array<Node>`][node])
-    — ancestors of `node`
+* `node` ([`Node`][node])
+  — found node
+* `parents` ([`Array<Node>`][node])
+  — ancestors of `node`
 
 ###### Returns
 
@@ -276,18 +276,18 @@ This means we try to keep the current release line,
 
 ## Related
 
-*   [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
-    — walk the tree with one parent
-*   [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
-    — create a new tree with all nodes that pass a test
-*   [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
-    — create a new tree with all nodes mapped by a given function
-*   [`unist-util-flatmap`](https://gitlab.com/staltz/unist-util-flatmap)
-    — create a new tree by mapping (to an array) with the given function
-*   [`unist-util-remove`](https://github.com/syntax-tree/unist-util-remove)
-    — remove nodes from a tree that pass a test
-*   [`unist-util-select`](https://github.com/syntax-tree/unist-util-select)
-    — select nodes with CSS-like selectors
+* [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
+  — walk the tree with one parent
+* [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
+  — create a new tree with all nodes that pass a test
+* [`unist-util-map`](https://github.com/syntax-tree/unist-util-map)
+  — create a new tree with all nodes mapped by a given function
+* [`unist-util-flatmap`](https://gitlab.com/staltz/unist-util-flatmap)
+  — create a new tree by mapping (to an array) with the given function
+* [`unist-util-remove`](https://github.com/syntax-tree/unist-util-remove)
+  — remove nodes from a tree that pass a test
+* [`unist-util-select`](https://github.com/syntax-tree/unist-util-select)
+  — select nodes with CSS-like selectors
 
 ## Contribute
 

@@ -64,9 +64,9 @@ visitParents(implicitTree, function (node, parents) {
 // Knows it’s a heading and its parents.
 visitParents(sampleTree, 'heading', function (node, parents) {
   expectType<Heading>(node)
-  expectType<
-    Array<Blockquote | FootnoteDefinition | List | ListItem | Root>
-  >(parents)
+  expectType<Array<Blockquote | FootnoteDefinition | List | ListItem | Root>>(
+    parents
+  )
 })
 
 // Not in tree.
