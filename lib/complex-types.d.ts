@@ -4,18 +4,48 @@ import type {Node, Parent} from 'unist'
 import type {Test} from 'unist-util-is'
 import type {Visitor} from './index.js'
 
+type LessThan<
+  A extends number,
+  B extends number,
+  S extends any[] = []
+> = S['length'] extends B
+  ? false
+  : S['length'] extends A
+  ? true
+  : LessThan<A, B, [...S, any]>
+
+type Subtract<
+  A extends number,
+  B extends number,
+  I extends any[] = [],
+  O extends any[] = []
+> = LessThan<A, B> extends true
+  ? never
+  : LessThan<I['length'], A> extends true
+  ? Subtract<
+      A,
+      B,
+      [...I, any],
+      LessThan<I['length'], B> extends true ? O : [...O, any]
+    >
+  : O['length']
+
 /**
  * Internal utility to collect all descendants of in `Tree`.
  */
 export type InclusiveDescendant<
   Tree extends Node = never,
-  Found = void
-> = Tree extends Parent
+  Found = void,
+  Depth extends number = 5
+> = Depth extends 0
+  ? Tree
+  : Tree extends Parent
   ?
       | Tree
       | InclusiveDescendant<
           Exclude<Tree['children'][number], Found | Tree>,
-          Found | Tree
+          Found | Tree,
+          Subtract<Depth, 1>
         >
   : Tree
 
