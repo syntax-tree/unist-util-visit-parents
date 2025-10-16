@@ -19,7 +19,7 @@ import type {
   Strong,
   TableCell
 } from 'mdast'
-import type {Node, Parent} from 'unist'
+import type {Node} from 'unist'
 import {CONTINUE, EXIT, SKIP, visitParents} from './index.js'
 
 /* Setup */
@@ -122,20 +122,21 @@ visitParents(sampleTree, isHeading2, function (node) {
 })
 
 // ## Combined tests
+// No `as const` fails.
 visitParents(sampleTree, ['heading', {depth: 1}, isHeading], function (node) {
   // Unfortunately TS casts things in arrays too vague.
   expectType<Root | RootContent>(node)
 })
 
-// To do: update to `unist-util-is` should make this work?
-// visitParents(
-//   sampleTree,
-//   ['heading', {depth: 1}, isHeading] as const,
-//   function (node) {
-//     // Unfortunately TS casts things in arrays too vague.
-//     expectType<Root | RootContent>(node)
-//   }
-// )
+// As const works.
+visitParents(
+  sampleTree,
+  ['heading', {depth: 1}, isHeading] as const,
+  function (node) {
+    // Unfortunately TS casts things in arrays too vague.
+    expectType<Heading>(node)
+  }
+)
 
 // ## Return type: incorrect.
 // @ts-expect-error: not an action.
