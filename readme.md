@@ -228,6 +228,9 @@ traversed.
   — found node
 * `parents` ([`Array<Node>`][node])
   — ancestors of `node`
+* `index` (`number` or `undefined`)
+  — index of `node` in its parent (the last of `parents`),
+  or `undefined` for the tree itself
 
 ###### Returns
 

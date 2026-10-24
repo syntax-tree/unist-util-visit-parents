@@ -47,9 +47,10 @@ visitParents()
 visitParents(sampleTree)
 
 // ## No test
-visitParents(sampleTree, function (node, parents) {
+visitParents(sampleTree, function (node, parents, index) {
   expectType<Nodes>(node)
   expectType<Parents[]>(parents)
+  expectType<number | undefined>(index)
 })
 
 visitParents(implicitTree, function (node, parents) {

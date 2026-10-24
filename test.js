@@ -1,9 +1,7 @@
 /**
- * @typedef {import('hast').Root} HastRoot
- * @typedef {import('mdast').Parents} Parents
- * @typedef {import('mdast').PhrasingContent} PhrasingContent
- * @typedef {import('mdast').Root} Root
- * @typedef {import('xast').Root} XastRoot
+ * @import {Root as HastRoot} from 'hast'
+ * @import {Nodes, Parents, PhrasingContent, Root} from 'mdast'
+ * @import {Root as XastRoot} from 'xast'
  */
 
 import assert from 'node:assert/strict'
@@ -139,6 +137,44 @@ test('visitParents', async function (t) {
     )
 
     assert.equal(n, reverseTypes.length, 'should visit all nodes in reverse')
+  })
+
+  await t.test('should pass `index`', function () {
+    /** @type {Array<number | undefined>} */
+    const expected = []
+    /** @type {Array<number | undefined>} */
+    const actual = []
+
+    visitParents(tree, function (node, parents, index) {
+      /** @type {Array<Nodes> | undefined} */
+      const siblings = parents[parents.length - 1]?.children
+      expected.push(siblings ? siblings.indexOf(node) : undefined)
+      actual.push(index)
+    })
+
+    assert.equal(actual[0], undefined)
+    assert.deepEqual(actual, expected)
+  })
+
+  await t.test('should pass `index`, backwards', function () {
+    /** @type {Array<number | undefined>} */
+    const expected = []
+    /** @type {Array<number | undefined>} */
+    const actual = []
+
+    visitParents(
+      tree,
+      function (node, parents, index) {
+        /** @type {Array<Nodes> | undefined} */
+        const siblings = parents[parents.length - 1]?.children
+        expected.push(siblings ? siblings.indexOf(node) : undefined)
+        actual.push(index)
+      },
+      true
+    )
+
+    assert.equal(actual[0], undefined)
+    assert.deepEqual(actual, expected)
   })
 
   await t.test('should only visit a given `type`', function () {
