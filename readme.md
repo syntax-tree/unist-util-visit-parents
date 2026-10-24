@@ -276,7 +276,7 @@ This means we try to keep the current release line,
 
 ## Related
 
-* [`unist-util-visit`](https://github.com/syntax-tree/unist-util-visit)
+* [`unist-util-visit`][unist-util-visit]
   — walk the tree with one parent
 * [`unist-util-filter`](https://github.com/syntax-tree/unist-util-filter)
   — create a new tree with all nodes that pass a test
@@ -305,84 +305,84 @@ abide by its terms.
 
 <!-- Definition -->
 
-[build-badge]: https://github.com/syntax-tree/unist-util-visit-parents/workflows/main/badge.svg
-
-[build]: https://github.com/syntax-tree/unist-util-visit-parents/actions
-
-[coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/unist-util-visit-parents.svg
-
-[coverage]: https://codecov.io/github/syntax-tree/unist-util-visit-parents
-
-[downloads-badge]: https://img.shields.io/npm/dm/unist-util-visit-parents.svg
-
-[downloads]: https://www.npmjs.com/package/unist-util-visit-parents
-
-[size-badge]: https://img.shields.io/badge/dynamic/json?label=minzipped%20size&query=$.size.compressedSize&url=https://deno.bundlejs.com/?q=unist-util-visit-parents
-
-[size]: https://bundlejs.com/?q=unist-util-visit-parents
-
-[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
-
-[backers-badge]: https://opencollective.com/unified/backers/badge.svg
-
-[collective]: https://opencollective.com/unified
-
-[chat-badge]: https://img.shields.io/badge/chat-discussions-success.svg
-
-[chat]: https://github.com/syntax-tree/unist/discussions
-
-[npm]: https://docs.npmjs.com/cli/install
-
-[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
-
-[esmsh]: https://esm.sh
-
-[typescript]: https://www.typescriptlang.org
-
-[license]: license
-
-[author]: https://wooorm.com
-
-[health]: https://github.com/syntax-tree/.github
-
-[contributing]: https://github.com/syntax-tree/.github/blob/HEAD/contributing.md
-
-[support]: https://github.com/syntax-tree/.github/blob/HEAD/support.md
-
-[coc]: https://github.com/syntax-tree/.github/blob/HEAD/code-of-conduct.md
-
-[unist]: https://github.com/syntax-tree/unist
-
-[node]: https://github.com/syntax-tree/unist#node
-
-[depth-first]: https://github.com/syntax-tree/unist#depth-first-traversal
-
-[tree-traversal]: https://github.com/syntax-tree/unist#tree-traversal
-
-[preorder]: https://github.com/syntax-tree/unist#preorder
-
-[unist-util-visit]: https://github.com/syntax-tree/unist-util-visit
-
-[unist-util-is]: https://github.com/syntax-tree/unist-util-is
-
-[api-visitparents]: #visitparentstree-test-visitor-reverse
-
-[api-continue]: #continue
-
-[api-exit]: #exit
-
-[api-skip]: #skip
-
 [api-action]: #action
 
 [api-actiontuple]: #actiontuple
 
 [api-buildvisitor]: #buildvisitor
 
+[api-continue]: #continue
+
+[api-exit]: #exit
+
 [api-index]: #index
+
+[api-skip]: #skip
 
 [api-test]: #test
 
 [api-visitor]: #visitor
 
 [api-visitorresult]: #visitorresult
+
+[api-visitparents]: #visitparentstree-test-visitor-reverse
+
+[author]: https://wooorm.com
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[build]: https://github.com/syntax-tree/unist-util-visit-parents/actions
+
+[build-badge]: https://github.com/syntax-tree/unist-util-visit-parents/workflows/main/badge.svg
+
+[chat]: https://github.com/syntax-tree/unist/discussions
+
+[chat-badge]: https://img.shields.io/badge/chat-discussions-success.svg
+
+[coc]: https://github.com/syntax-tree/.github/blob/HEAD/code-of-conduct.md
+
+[collective]: https://opencollective.com/unified
+
+[contributing]: https://github.com/syntax-tree/.github/blob/HEAD/contributing.md
+
+[coverage]: https://codecov.io/github/syntax-tree/unist-util-visit-parents
+
+[coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/unist-util-visit-parents.svg
+
+[depth-first]: https://github.com/syntax-tree/unist#depth-first-traversal
+
+[downloads]: https://www.npmjs.com/package/unist-util-visit-parents
+
+[downloads-badge]: https://img.shields.io/npm/dm/unist-util-visit-parents.svg
+
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[esmsh]: https://esm.sh
+
+[health]: https://github.com/syntax-tree/.github
+
+[license]: license
+
+[node]: https://github.com/syntax-tree/unist#node
+
+[npm]: https://docs.npmjs.com/cli/install
+
+[preorder]: https://github.com/syntax-tree/unist#preorder
+
+[size]: https://bundlejs.com/?q=unist-util-visit-parents
+
+[size-badge]: https://img.shields.io/badge/dynamic/json?label=minzipped%20size&query=$.size.compressedSize&url=https://deno.bundlejs.com/?q=unist-util-visit-parents
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[support]: https://github.com/syntax-tree/.github/blob/HEAD/support.md
+
+[tree-traversal]: https://github.com/syntax-tree/unist#tree-traversal
+
+[typescript]: https://www.typescriptlang.org
+
+[unist]: https://github.com/syntax-tree/unist
+
+[unist-util-is]: https://github.com/syntax-tree/unist-util-is
+
+[unist-util-visit]: https://github.com/syntax-tree/unist-util-visit

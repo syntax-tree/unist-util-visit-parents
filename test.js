@@ -19,11 +19,11 @@ const tree = /** @type {Root} */ (
   fromMarkdown('Some _emphasis_, **importance**, and `code`.')
 )
 const paragraph = tree.children[0]
-assert(paragraph.type === 'paragraph')
+assert.ok(paragraph.type === 'paragraph')
 const emphasis = paragraph.children[1]
-assert(emphasis.type === 'emphasis')
+assert.ok(emphasis.type === 'emphasis')
 const strong = paragraph.children[3]
-assert(strong.type === 'strong')
+assert.ok(strong.type === 'strong')
 
 const textNodes = 6
 
@@ -180,7 +180,14 @@ test('visitParents', async function (t) {
         return typeof index === 'number' && index > 3
       },
       /**
+       * Check that a requested node is visited.
+       *
+       * @param node
+       *   Visited node.
+       * @param parents
+       *   Ancestors of `node`.
        * @returns {undefined}
+       *   Nothing.
        */
       function (node, parents) {
         const parent = parents[parents.length - 1]
@@ -502,7 +509,7 @@ test('visitParents', async function (t) {
 
       if (n === 2) {
         const parent = parents[parents.length - 1]
-        assert(parent.type === 'root')
+        assert.ok(parent.type === 'root')
         parent.children.push(other)
       }
     })
@@ -553,7 +560,7 @@ test('visitParents', async function (t) {
     }
 
     const stack = stripAnsi(message)
-      .replace(/[-\w:\\/]+[\\/](\w+.js):\d+:\d+/g, '$1:1:1')
+      .replace(/[\w\-/:\\]+[/\\](\w+.js):\d+:\d+/g, '$1:1:1')
       .split('\n')
       .slice(0, 6)
       .join('\n')
@@ -601,7 +608,7 @@ test('visitParents', async function (t) {
     }
 
     const stack = stripAnsi(message)
-      .replace(/[-\w:\\/]+[\\/](\w+.js):\d+:\d+/g, '$1:1:1')
+      .replace(/[\w\-/:\\]+[/\\](\w+.js):\d+:\d+/g, '$1:1:1')
       .split('\n')
       .slice(0, 6)
       .join('\n')
