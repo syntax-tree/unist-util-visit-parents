@@ -518,7 +518,9 @@ test('visitParents', async function (t) {
   })
 
   await t.test('should recurse into a bazillion nodes', function () {
-    const expected = 6000
+    // Deep enough to be useful but low enough to work on my new apple silicon
+    // macbook (old mac was 6k)?
+    const expected = 4000
     const tree = fromMarkdown(
       Array.from({length: expected / 4}).join('* 1. ') + 'asd'
     )
