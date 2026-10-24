@@ -168,7 +168,7 @@ visitParents(sampleTree, {
 })
 
 visitParents(sampleTree, {
-  // @ts-expect-error: works in js but useless so not allowed in typers.
+  // @ts-expect-error: works in js but useless so not allowed in types.
   exit() {
     return [CONTINUE, 1]
   }
