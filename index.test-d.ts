@@ -1,4 +1,9 @@
-import {expectAssignable, expectNotType, expectType} from 'tsd'
+import {
+  expectAssignable,
+  expectNotAssignable,
+  expectNotType,
+  expectType
+} from 'tsd'
 import type {
   Blockquote,
   Definition,
@@ -20,7 +25,14 @@ import type {
   TableCell
 } from 'mdast'
 import type {Node} from 'unist'
-import {CONTINUE, EXIT, SKIP, visitParents} from './index.js'
+import {
+  type VisitorExit,
+  type VisitorResultExit,
+  CONTINUE,
+  EXIT,
+  SKIP,
+  visitParents
+} from './index.js'
 
 /* Setup */
 const implicitTree = {
@@ -81,6 +93,110 @@ visitParents(implicitTree, 'heading', function (node, parents) {
   expectType<never>(node)
   expectType<never[]>(parents)
 })
+
+// ## Visitors
+
+// No test.
+visitParents(sampleTree, {
+  enter(node, parents, index) {
+    expectType<Nodes>(node)
+    expectType<Parents[]>(parents)
+    expectType<number | undefined>(index)
+  },
+  exit(node, parents, index) {
+    expectType<Nodes>(node)
+    expectType<Parents[]>(parents)
+    expectType<number | undefined>(index)
+  }
+})
+
+// Only `exit`, reverse.
+visitParents(
+  sampleTree,
+  {
+    exit(node) {
+      expectType<Nodes>(node)
+    }
+  },
+  true
+)
+
+// String test.
+visitParents(sampleTree, 'heading', {
+  enter(node, parents) {
+    expectType<Heading>(node)
+    expectType<Array<Blockquote | FootnoteDefinition | List | ListItem | Root>>(
+      parents
+    )
+  },
+  exit(node, parents) {
+    expectType<Heading>(node)
+    expectType<Array<Blockquote | FootnoteDefinition | List | ListItem | Root>>(
+      parents
+    )
+  }
+})
+
+// `exit` is required, to just `enter`, pass it directly.
+// @ts-expect-error: check that `exit` is required.
+visitParents(sampleTree, {})
+// @ts-expect-error: check that `exit` is required.
+visitParents(sampleTree, {enter: () => CONTINUE})
+// @ts-expect-error: check that `exit` is required.
+visitParents(sampleTree, 'heading', {enter: () => CONTINUE})
+
+// Results.
+visitParents(sampleTree, {
+  enter() {
+    return SKIP
+  },
+  exit() {
+    return EXIT
+  }
+})
+
+visitParents(sampleTree, {
+  exit() {
+    return CONTINUE
+  }
+})
+
+visitParents(sampleTree, {
+  exit() {
+    return 1
+  }
+})
+
+visitParents(sampleTree, {
+  // @ts-expect-error: works in js but useless so not allowed in typers.
+  exit() {
+    return [CONTINUE, 1]
+  }
+})
+
+visitParents(sampleTree, {
+  // @ts-expect-error: check that `SKIP` cannot be returned from `exit`.
+  exit() {
+    return SKIP
+  }
+})
+
+visitParents(sampleTree, {
+  // @ts-expect-error: check that `SKIP` cannot be returned from `exit`.
+  exit() {
+    return [SKIP, 1]
+  }
+})
+
+// Exit visitors on their own.
+const exitVisitor: VisitorExit<Nodes, Parents> = function () {
+  return EXIT
+}
+
+visitParents(sampleTree, {exit: exitVisitor})
+
+expectAssignable<VisitorResultExit>(EXIT)
+expectNotAssignable<VisitorResultExit>(SKIP)
 
 // ## Props test
 

@@ -55,6 +55,7 @@ const xoConfig = [
       'unicorn/prefer-string-raw': 'off',
       'unicorn/prefer-string-replace-all': 'off',
       'unicorn/prefer-ternary': 'off',
+      'unicorn/prefer-type-error': 'off',
       'unicorn/prefer-unicode-code-point-escapes': 'off',
       'unicorn/require-array-sort-compare': 'off',
       'unicorn/single-line-block-comment-style': 'off'

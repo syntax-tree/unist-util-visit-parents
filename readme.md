@@ -17,17 +17,21 @@
 * [Install](#install)
 * [Use](#use)
 * [API](#api)
-  * [`visitParents(tree[, test], visitor[, reverse])`](#visitparentstree-test-visitor-reverse)
+  * [`visitParents(tree[, test], enter|visitors[, reverse])`](#visitparentstree-test-entervisitors-reverse)
   * [`CONTINUE`](#continue)
   * [`EXIT`](#exit)
   * [`SKIP`](#skip)
   * [`Action`](#action)
   * [`ActionTuple`](#actiontuple)
   * [`BuildVisitor`](#buildvisitor)
+  * [`BuildVisitors`](#buildvisitors)
   * [`Index`](#index)
   * [`Test`](#test)
   * [`Visitor`](#visitor)
+  * [`VisitorExit`](#visitorexit)
   * [`VisitorResult`](#visitorresult)
+  * [`VisitorResultExit`](#visitorresultexit)
+  * [`Visitors`](#visitors)
 * [Types](#types)
 * [Compatibility](#compatibility)
 * [Related](#related)
@@ -94,16 +98,18 @@ This package exports the identifiers [`CONTINUE`][api-continue],
 [`EXIT`][api-exit], [`SKIP`][api-skip], and [`visitParents`][api-visitparents].
 There is no default export.
 
-### `visitParents(tree[, test], visitor[, reverse])`
+### `visitParents(tree[, test], enter|visitors[, reverse])`
 
 Visit nodes, with ancestral information.
 
 This algorithm performs *[depth-first][]* *[tree traversal][tree-traversal]*
-in *[preorder][]* (**NLR**) or if `reverse` is given, in *reverse preorder*
-(**NRL**).
+in *[preorder][]* (**NLR**) or if `reverse` is given,
+in *reverse preorder* (**NRL**).
+An [`exit`][api-visitors] visitor is called in *[postorder][]* (**LRN**)
+or if `reverse` is given, in *reverse postorder* (**RLN**).
 
-You can choose for which nodes `visitor` is called by passing a `test`.
-For complex tests, you should test yourself in `visitor`, as it will be
+You can choose which nodes are visited by passing a `test`.
+For complex tests, you should test yourself in a visitor, as it will be
 faster and will have improved type information.
 
 Walking the tree is an intensive task.
@@ -113,7 +119,15 @@ Instead of walking a tree multiple times, walk it once, use
 different operations.
 
 You can change the tree.
-See [`Visitor`][api-visitor] for more info.
+Changes inside a node made when entering it are walked,
+changes made when exiting it are not.
+See [`Visitor`][api-visitor] and [`VisitorExit`][api-visitorexit] for more
+info.
+
+###### Signatures
+
+* `visitParents(tree[, test], enter[, reverse])`
+* `visitParents(tree[, test], visitors[, reverse])`
 
 ###### Parameters
 
@@ -121,10 +135,15 @@ See [`Visitor`][api-visitor] for more info.
   — tree to traverse
 * `test` ([`Test`][api-test], optional)
   — [`unist-util-is`][unist-util-is]-compatible test
-* `visitor` ([`Visitor`][api-visitor])
-  — handle each node
+* `enter` ([`Visitor`][api-visitor])
+  — handle each node when entering it
+* `visitors` ([`Visitors`][api-visitors])
+  — handle each node when exiting it,
+  and optionally when entering it
 * `reverse` (`boolean`, default: `false`)
-  — traverse in reverse preorder (NRL) instead of the default preorder (NLR)
+  — walk children from last to first;
+  for `enter`, reverse preorder (NRL) instead of preorder (NLR);
+  for `exit`, reverse postorder (RLN) instead of postorder (LRN)
 
 ###### Returns
 
@@ -141,6 +160,7 @@ Stop traversing immediately (`false`).
 ### `SKIP`
 
 Do not traverse this node’s children (`'skip'`).
+Only works when entering a node.
 
 ### `Action`
 
@@ -183,6 +203,24 @@ It will infer which values are passed as `node` and which as `parents`.
 
 [`Visitor`][api-visitor].
 
+### `BuildVisitors`
+
+Build typed [`Visitors`][api-visitors] from a tree and a test (TypeScript
+type).
+
+It will infer which values are passed as `node` and which as `parents`.
+
+###### Type parameters
+
+* `Tree` ([`Node`][node], default: `Node`)
+  — tree type
+* `Check` ([`Test`][api-test], default: `Test`)
+  — test type
+
+###### Returns
+
+[`Visitors`][api-visitors].
+
 ### `Index`
 
 Move to the sibling at `index` next (after node itself is completely
@@ -205,22 +243,17 @@ type Index = number
 
 ### `Visitor`
 
-Handle a node (matching `test`, if given) (TypeScript type).
+Handle a node (matching `test`, if given) before its children (TypeScript
+type).
 
-Visitors are free to transform `node`.
-They can also transform the parent of node (the last of `ancestors`).
-
-Replacing `node` itself, if `SKIP` is not returned, still causes its
-descendants to be walked (which is a bug).
-
-When adding or removing previous siblings of `node` (or next siblings, in
-case of reverse), the `Visitor` should return a new `Index` to specify the
-sibling to traverse after `node` is traversed.
-Adding or removing next siblings of `node` (or previous siblings, in case
-of reverse) is handled as expected without needing to return a new `Index`.
-
-Removing the children property of an ancestor still results in them being
-traversed.
+Changes inside `node` are walked next.
+Replacing or removing it is easier in `exit`.
+When replacing or removing it here,
+return `SKIP` (as otherwise its old children are walked),
+or `[SKIP, index]` to continue with the node now at `index`.
+Changing next siblings (in walk order) is fine;
+changing previous siblings needs a new `Index`.
+Removing an ancestor or changing its previous siblings is not supported.
 
 ###### Parameters
 
@@ -234,18 +267,48 @@ traversed.
 
 ###### Returns
 
-What to do next.
+What to do next ([`VisitorResult`][api-visitorresult]).
 
-An `Index` is treated as a tuple of `[CONTINUE, Index]`.
-An `Action` is treated as a tuple of `[Action]`.
+Passing a tuple back ([`ActionTuple`][api-actiontuple]) only makes sense as
+`[SKIP, Index]`.
 
-Passing a tuple back only makes sense if the `Action` is `SKIP`.
-When the `Action` is `EXIT`, that action can be returned.
-When the `Action` is `CONTINUE`, `Index` can be returned.
+### `VisitorExit`
+
+Handle a node (matching `test`, if given) after its children (TypeScript type).
+
+Changes inside `node` are not walked,
+which makes this a good place to change `node` based on its children,
+or to replace or remove it.
+When removing `node` or changing previous siblings (in walk order),
+return a new `Index`.
+Removing an ancestor or changing its previous siblings is not supported.
+
+###### Parameters
+
+* `node` ([`Node`][node])
+  — found node
+* `parents` ([`Array<Node>`][node])
+  — ancestors of `node`
+* `index` (`number` or `undefined`)
+  — index of `node` in its parent (the last of `parents`),
+  or `undefined` for the tree itself
+
+###### Returns
+
+What to do next ([`VisitorResultExit`][api-visitorresultexit]).
+
+`CONTINUE` (`true`, nothing) continues as normal,
+`EXIT` (`false`) stops traversing,
+and `Index` continues at that sibling.
 
 ### `VisitorResult`
 
-Any value that can be returned from a visitor (TypeScript type).
+Any value that can be returned from an enter visitor (TypeScript type).
+
+Like [`VisitorResultExit`][api-visitorresultexit] but `SKIP` can be returned to
+not walk children of the node,
+and [`ActionTuple`][api-actiontuple] can be used to combine an action with an
+index.
 
 ###### Type
 
@@ -259,13 +322,48 @@ type VisitorResult =
   | void
 ```
 
+### `VisitorResultExit`
+
+Any value that can be returned from an exit visitor (TypeScript type).
+
+###### Type
+
+```ts
+type VisitorResultExit = Index | boolean | null | undefined | void
+```
+
+### `Visitors`
+
+Handle nodes when entering and exiting them (TypeScript type).
+The `enter` visitor is optional while `exit` is required.
+
+Pass an `enter` visitor directly to only handle nodes when entering them.
+
+`enter` is called before children (if any) are walked and `exit` after that.
+`exit` is still called when `enter` returns `SKIP`.
+Both `enter` and `exit` are only called for nodes that match an optional `test`.
+
+###### Fields
+
+* `enter` ([`Visitor`][api-visitor], optional)
+  — handle a node before its children
+* `exit` ([`VisitorExit`][api-visitorexit])
+  — handle a node after its children
+
 ## Types
 
 This package is fully typed with [TypeScript][].
 It exports the additional types [`Action`][api-action],
-[`ActionTuple`][api-actiontuple], [`BuildVisitor`][api-buildvisitor],
-[`Index`][api-index], [`Test`][api-test], [`Visitor`][api-visitor], and
-[`VisitorResult`][api-visitorresult].
+[`ActionTuple`][api-actiontuple],
+[`BuildVisitor`][api-buildvisitor],
+[`BuildVisitors`][api-buildvisitors],
+[`Index`][api-index],
+[`Test`][api-test],
+[`Visitor`][api-visitor],
+[`VisitorExit`][api-visitorexit],
+[`VisitorResult`][api-visitorresult],
+[`VisitorResultExit`][api-visitorresultexit], and
+[`Visitors`][api-visitors].
 
 ## Compatibility
 
@@ -314,6 +412,8 @@ abide by its terms.
 
 [api-buildvisitor]: #buildvisitor
 
+[api-buildvisitors]: #buildvisitors
+
 [api-continue]: #continue
 
 [api-exit]: #exit
@@ -326,9 +426,15 @@ abide by its terms.
 
 [api-visitor]: #visitor
 
+[api-visitorexit]: #visitorexit
+
 [api-visitorresult]: #visitorresult
 
-[api-visitparents]: #visitparentstree-test-visitor-reverse
+[api-visitorresultexit]: #visitorresultexit
+
+[api-visitors]: #visitors
+
+[api-visitparents]: #visitparentstree-test-entervisitors-reverse
 
 [author]: https://wooorm.com
 
@@ -369,6 +475,8 @@ abide by its terms.
 [node]: https://github.com/syntax-tree/unist#node
 
 [npm]: https://docs.npmjs.com/cli/install
+
+[postorder]: https://github.com/syntax-tree/unist#postorder
 
 [preorder]: https://github.com/syntax-tree/unist#preorder
 

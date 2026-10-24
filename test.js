@@ -12,10 +12,8 @@ import {gfmFromMarkdown} from 'mdast-util-gfm'
 import {gfm} from 'micromark-extension-gfm'
 import {EXIT, SKIP, CONTINUE, visitParents} from 'unist-util-visit-parents'
 
-// To do: remove cast when `mdast-util-from-markdown` is updated.
-const tree = /** @type {Root} */ (
-  fromMarkdown('Some _emphasis_, **importance**, and `code`.')
-)
+const mini = fromMarkdown('*a* b')
+const tree = fromMarkdown('Some _emphasis_, **importance**, and `code`.')
 const paragraph = tree.children[0]
 assert.ok(paragraph.type === 'paragraph')
 const emphasis = paragraph.children[1]
@@ -90,18 +88,79 @@ test('visitParents', async function (t) {
     )
   })
 
-  await t.test('should fail without tree', async function () {
+  await t.test('should fail without arguments', async function () {
     assert.throws(function () {
       // @ts-expect-error: check that the runtime throws an error.
       visitParents()
-    }, /TypeError: visitor is not a function/)
+    }, /Unexpected value `undefined` for `tree`, expected node/)
   })
 
-  await t.test('should fail without visitor', async function () {
+  await t.test('should fail with tree, without visitor', async function () {
     assert.throws(function () {
       // @ts-expect-error: check that the runtime throws an error.
       visitParents(tree)
-    }, /TypeError: visitor is not a function/)
+    }, /Unexpected value `undefined` for `enter` or `visitors`, expected visitor or object with visitors/)
+  })
+
+  await t.test('should fail with a visitor, without tree', async function () {
+    assert.throws(function () {
+      // @ts-expect-error: check that the runtime throws an error.
+      visitParents(undefined, function () {})
+    }, /Unexpected value `undefined` for `tree`, expected node/)
+  })
+
+  await t.test('should fail with an invalid visitor', async function () {
+    assert.throws(function () {
+      // @ts-expect-error: check that the runtime throws an error.
+      visitParents(tree, 1)
+    }, /Unexpected value `1` for `enter` or `visitors`, expected visitor or object with visitors/)
+  })
+
+  await t.test('should fail with invalid visitors', async function () {
+    assert.throws(function () {
+      // @ts-expect-error: check that the runtime throws an error.
+      visitParents(tree, {})
+    }, /Unexpected value `undefined` for `visitors.exit`, expected visitor/)
+  })
+
+  await t.test('should fail without an `exit` visitor', function () {
+    assert.throws(function () {
+      // @ts-expect-error: check that the runtime throws an error.
+      visitParents(mini, {enter() {}})
+    }, /Unexpected value `undefined` for `visitors.exit`, expected visitor/)
+  })
+
+  await t.test(
+    'should fail with an invalid `enter` visitor',
+    async function () {
+      assert.throws(function () {
+        // @ts-expect-error: check that the runtime throws an error.
+        visitParents(tree, {enter: 1, exit() {}})
+      }, /Unexpected value `1` for `visitors\.enter`, expected optional visitor/)
+    }
+  )
+
+  await t.test('should fail with an invalid `exit` visitor', async function () {
+    assert.throws(function () {
+      // @ts-expect-error: check that the runtime throws an error.
+      visitParents(tree, {enter() {}, exit: 1})
+    }, /Unexpected value `1` for `visitors\.exit`, expected visitor \(pass a visitor directly if you only want an enter visitor\)/)
+  })
+
+  await t.test(
+    'should fail with a test but without visitor',
+    async function () {
+      assert.throws(function () {
+        // @ts-expect-error: check that the runtime throws an error.
+        visitParents(tree, 'text')
+      }, /Unexpected value `text` for `enter` or `visitors`, expected visitor or object with visitors/)
+    }
+  )
+
+  await t.test('should fail on an invalid child', async function () {
+    assert.throws(function () {
+      visitParents({type: 'root', children: [null]}, function () {})
+    }, /Cannot use 'in' operator to search for 'children' in null/)
   })
 
   await t.test('should iterate over all nodes', function () {
@@ -137,6 +196,29 @@ test('visitParents', async function (t) {
     )
 
     assert.equal(n, reverseTypes.length, 'should visit all nodes in reverse')
+  })
+
+  await t.test('should support a test and `reverse`', function () {
+    /** @type {Array<string>} */
+    const values = []
+
+    visitParents(
+      tree,
+      'text',
+      function (node) {
+        values.push(node.value)
+      },
+      true
+    )
+
+    assert.deepEqual(values, [
+      '.',
+      ', and ',
+      'importance',
+      ', ',
+      'emphasis',
+      'Some '
+    ])
   })
 
   await t.test('should pass `index`', function () {
@@ -551,6 +633,220 @@ test('visitParents', async function (t) {
     })
 
     assert.equal(n, l, 'should walk over all nodes')
+  })
+
+  await t.test('should support `exit`', function () {
+    /** @type {Array<string>} */
+    const events = []
+
+    visitParents(mini, {
+      exit(node) {
+        events.push('-' + node.type)
+      }
+    })
+
+    assert.equal(events.join(' '), '-text -emphasis -text -paragraph -root')
+  })
+
+  await t.test('should support `exit`, backwards', function () {
+    /** @type {Array<string>} */
+    const events = []
+
+    visitParents(
+      mini,
+      {
+        exit(node) {
+          events.push('-' + node.type)
+        }
+      },
+      true
+    )
+
+    assert.equal(events.join(' '), '-text -text -emphasis -paragraph -root')
+  })
+
+  await t.test('should support `enter` and `exit`', function () {
+    /** @type {Array<string>} */
+    const events = []
+
+    visitParents(mini, {
+      enter(node) {
+        events.push('+' + node.type)
+      },
+      exit(node) {
+        events.push('-' + node.type)
+      }
+    })
+
+    assert.equal(
+      events.join(' '),
+      '+root +paragraph +emphasis +text -text -emphasis +text -text -paragraph -root'
+    )
+  })
+
+  await t.test(
+    'should pass `parents` and `index` to `enter` and `exit`',
+    function () {
+      /** @type {Array<unknown>} */
+      const entered = []
+      /** @type {Array<unknown>} */
+      const exited = []
+
+      // Text has no children, so `exit` is immediately after `enter`.
+      visitParents(mini, 'text', {
+        enter(_, parents, index) {
+          entered.push([parents, index])
+        },
+        exit(_, parents, index) {
+          exited.push([parents, index])
+        }
+      })
+
+      assert.equal(exited.length, 2)
+      assert.deepEqual(exited, entered)
+    }
+  )
+
+  await t.test(
+    'should pass nodes that match `test` to `enter` and `exit`',
+    function () {
+      /** @type {Array<string>} */
+      const events = []
+
+      visitParents(mini, 'emphasis', {
+        enter(node) {
+          events.push('+' + node.type)
+        },
+        exit(node) {
+          events.push('-' + node.type)
+        }
+      })
+
+      assert.equal(events.join(' '), '+emphasis -emphasis')
+    }
+  )
+
+  await t.test('should `exit` if `enter` skips it', function () {
+    /** @type {Array<string>} */
+    const events = []
+
+    visitParents(mini, {
+      enter(node) {
+        events.push('+' + node.type)
+        return node.type === 'paragraph' ? SKIP : CONTINUE
+      },
+      exit(node) {
+        events.push('-' + node.type)
+      }
+    })
+
+    assert.equal(events.join(' '), '+root +paragraph -paragraph -root')
+  })
+
+  await t.test('should not `exit` if `enter` exits', function () {
+    /** @type {Array<string>} */
+    const events = []
+
+    visitParents(mini, {
+      enter(node) {
+        events.push('+' + node.type)
+        return node.type === 'emphasis' ? EXIT : CONTINUE
+      },
+      exit(node) {
+        events.push('-' + node.type)
+      }
+    })
+
+    assert.equal(events.join(' '), '+root +paragraph +emphasis')
+  })
+
+  await t.test('should stop if `exit` exits', function () {
+    /** @type {Array<string>} */
+    const events = []
+
+    visitParents(mini, {
+      exit(node) {
+        events.push('-' + node.type)
+        return node.type === 'emphasis' ? EXIT : CONTINUE
+      }
+    })
+
+    assert.equal(events.join(' '), '-text -emphasis')
+  })
+
+  await t.test('should fail on `SKIP` from `exit`', function () {
+    assert.throws(function () {
+      visitParents(mini, {
+        // @ts-expect-error: check that the runtime throws an error.
+        exit() {
+          return SKIP
+        }
+      })
+    }, /Unexpected value `skip` from `exit`, expected `CONTINUE`, `EXIT`, index, or nothing/)
+  })
+
+  await t.test('should fail on `[SKIP, index]` from `exit`', function () {
+    assert.throws(function () {
+      visitParents(mini, {
+        // @ts-expect-error: check that the runtime throws an error.
+        exit() {
+          return [SKIP, 1]
+        }
+      })
+    }, /Unexpected value `skip` from `exit`/)
+  })
+
+  await t.test(
+    'should support `CONTINUE` and nothing from `exit`',
+    function () {
+      /** @type {Array<string>} */
+      const events = []
+
+      visitParents(mini, {
+        exit(node) {
+          events.push('-' + node.type)
+          return node.type === 'text' ? CONTINUE : null
+        }
+      })
+
+      assert.equal(events.join(' '), '-text -emphasis -text -paragraph -root')
+    }
+  )
+
+  await t.test('should support an `index` from `exit`', function () {
+    const tree = /** @type {Root} */ (fromMarkdown('*a* b'))
+    /** @type {Array<string>} */
+    const events = []
+
+    // Unwrap emphasis after its children are walked.
+    visitParents(tree, {
+      enter(node) {
+        events.push('+' + node.type)
+      },
+      exit(node, parents, index) {
+        events.push('-' + node.type)
+        const parent = parents[parents.length - 1]
+
+        if (node.type === 'emphasis' && parent && typeof index === 'number') {
+          parent.children.splice(index, 1, ...node.children)
+          return index + node.children.length
+        }
+      }
+    })
+
+    const paragraph = tree.children[0]
+    assert.ok(paragraph.type === 'paragraph')
+    assert.deepEqual(
+      paragraph.children.map(function (child) {
+        return child.type
+      }),
+      ['text', 'text']
+    )
+    // The unwrapped text is not walked again.
+    assert.equal(
+      events.join(' '),
+      '+root +paragraph +emphasis +text -text -emphasis +text -text -paragraph -root'
+    )
   })
 
   await t.test('should recurse into a bazillion nodes', function () {
